@@ -7,7 +7,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import { useNavigation } from '@react-navigation/native'
 import { getAuth, signOut } from '@react-native-firebase/auth'
 
-
 const Screen3 = () => {
     const [loading, setLoading] = useState(false)
 
@@ -39,13 +38,20 @@ const Screen3 = () => {
         );
 
     }
+
+
+   
     return (
         <View style={styleContainer.container}>
             <Header />
             <Button title={"Log Out"} onPress={LogOutHandle} loading={loading} />
+
         </View>
+
     )
 }
+
+
 
 export default Screen3
 

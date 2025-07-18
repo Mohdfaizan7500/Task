@@ -1,4 +1,4 @@
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { useContext, useState } from 'react'
 import { ColorPatel } from '../../src/assets/ColorPatel'
 import { s, vs } from 'react-native-size-matters'
@@ -7,8 +7,12 @@ import LineIcon from 'react-native-vector-icons/Feather';
 import SearchIcon from 'react-native-vector-icons/FontAwesome';
 import { TextInput } from 'react-native';
 import { TaskContext } from '../TaskProvider';
-const Header = () => {
+import { getAuth, signOut } from '@react-native-firebase/auth';
+import { useNavigation } from '@react-navigation/native';
+const Header = ({ headerSearch }) => {
     const { tasks, searchTasks, } = useContext(TaskContext);
+
+    const navigation = useNavigation();
 
     const [SearchTodo, setSearchTodo] = useState('')
     const [searchQuery, setSearchQuery] = useState('');
@@ -21,6 +25,20 @@ const Header = () => {
         const options = { day: 'numeric', month: 'long', year: 'numeric' };
         const formattedDate = currentDate.toLocaleDateString('en-GB', options);
         return formattedDate
+    }
+
+    const sendData = (txt) => {
+        headerSearch(txt)
+    }
+
+    const LogoutHandle = async () => {
+        try {
+            const auth = getAuth(); // Use existing auth instance if available
+            await signOut(auth); // Sign out the user
+            // Consider adding any additional cleanup here if needed
+            navigation.navigate('Login'); // Or perhaps 'Login' instead of 'Signup'?
+        } catch (error) {
+        }
     }
     return (
         <View style={styles.ViewBG}>
@@ -36,10 +54,17 @@ const Header = () => {
                     <TextInput style={styles.SearchField} placeholder="Search tasks..."
                         value={searchQuery}
                         placeholderTextColor={'gray'}
-                        onChangeText={setSearchQuery}
+                        onChangeText={(txt) => [sendData(txt), setSearchQuery(txt)]}
                     />
                 </View>
-                <TouchableOpacity style={styles.LineContainer}>
+                <TouchableOpacity style={styles.LineContainer} onPress={() => {
+                    Alert.alert("Log out", "Are you sure, Want to logout",
+                        [
+                            { text: 'Cancel', style: "cancel" },
+                            { text: "Logout", onPress: () => LogoutHandle() }
+                        ]
+                    )
+                }}>
                     <LineIcon name="more-horizontal" size={25} color={ColorPatel.Bacground} />
                 </TouchableOpacity>
 

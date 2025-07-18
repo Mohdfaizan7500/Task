@@ -102,7 +102,8 @@ const TaskListScreen2 = ({ navigation }) => {
                     <Text style={styles.emptyText}>No tasks found. Add one!</Text>
                 )}
             />
-            <TouchableOpacity
+            <TouchableOpacity 
+            
                 style={styles.addButton}
                 onPress={() => navigation.navigate('AddTaskScreen')}
             >
@@ -181,6 +182,7 @@ const styles = StyleSheet.create({
         borderRadius: 8,
         alignItems: 'center',
         marginTop: 16,
+        
     },
     addButtonText: {
         color: 'white',

@@ -16,7 +16,7 @@ const Splash = () => {
     const checkLogin = async () => {
          getAuth().onAuthStateChanged(user => {
             if (user !== null) {
-              navigation.navigate("Home")
+              navigation.navigate("Todo")
             }
             else
             {

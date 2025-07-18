@@ -9,6 +9,7 @@ import Main from './Main';
 import Home from './Home';
 import AddTask from './AddTask';
 import { getAuth } from '@react-native-firebase/auth';
+import Todo from '../../scr2/Todo';
 const Stack = createNativeStackNavigator();
 
 
@@ -29,10 +30,7 @@ const Navigation = () => {
         <Stack.Screen name='Signup' component={SignUp} options={{ headerShown: false }} />
         <Stack.Screen name='Login' component={Login} options={{ headerShown: false }} />
         <Stack.Screen name='Home' component={Home} options={{ headerShown: false }} />
-        <Stack.Screen name='AddTask' component={AddTask} />
-
-
-
+        <Stack.Screen name='Todo' component={Todo} options={{ headerShown: false }} />
       </Stack.Navigator>
     </NavigationContainer>
   )

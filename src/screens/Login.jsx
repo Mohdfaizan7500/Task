@@ -51,7 +51,7 @@ const Login = () => {
             await signInWithEmailAndPassword(getAuth(), email, password)
                 .then(async(userCredential) => {
                     if (userCredential.user.emailVerified) {
-                        navigation.navigate("Home");
+                        navigation.navigate("Todo");
                         setloading(false)
                         setEmail('');
                         setpassword('')

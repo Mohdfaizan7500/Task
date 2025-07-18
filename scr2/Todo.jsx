@@ -13,12 +13,12 @@ const Todo = () => {
   const Stack = createNativeStackNavigator();
   return (
     <TaskProvider>
-      <NavigationContainer>
+      {/* <NavigationContainer> */}
         <Stack.Navigator>
           <Stack.Screen name='TaskListScreen' component={TaskListScreen3} options={{headerShown:false}} />
           <Stack.Screen name='AddTaskScreen' component={AddTaskScreen} />
         </Stack.Navigator>
-      </NavigationContainer>
+      {/* </NavigationContainer> */}
     </TaskProvider>
   )
 }

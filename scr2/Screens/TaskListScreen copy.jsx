@@ -7,6 +7,7 @@ import Checkbox from '../components/CheckBox';
 import EditIcon from 'react-native-vector-icons/Feather';
 import DeleteIcon from 'react-native-vector-icons/MaterialIcons';
 import Header from '../components/Header';
+import { ColorPatel } from '../../src/assets/ColorPatel';
 
 const TaskListScreen3 = ({ navigation }) => {
     const { tasks, deleteTask, searchTasks, updateTask } = useContext(TaskContext);
@@ -120,18 +121,25 @@ const TaskListScreen3 = ({ navigation }) => {
         </Swipeable>
     );
 
+
+    const headerSearch = (txt)=>{
+
+        setSearchQuery(txt)
+
+    }
+
     return (
         <SafeAreaView style={styles.container}>
-            <Header/>
+            <Header headerSearch={headerSearch} />
             <View style={{padding:16,flex:1}}>
-            <View style={styles.searchContainer}>
+            {/* <View style={styles.searchContainer}>
                 <TextInput
                     style={styles.searchInput}
                     placeholder="Search tasks..."
                     value={searchQuery}
                     onChangeText={setSearchQuery}
                 />
-            </View>
+            </View> */}
 
             <GestureHandlerRootView>
                 <FlatList
@@ -228,7 +236,7 @@ const styles = StyleSheet.create({
         color: '#888',
     },
     addButton: {
-        backgroundColor: '#6200ee',
+        backgroundColor: ColorPatel.AppColor,
         padding: 16,
         borderRadius: 8,
         alignItems: 'center',

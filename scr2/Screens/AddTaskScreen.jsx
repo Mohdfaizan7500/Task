@@ -75,6 +75,8 @@ const AddTaskScreen = ({ navigation, route }) => {
             Alert.alert('Validation Error', 'Title is required');
             return;
         }
+    
+        isEdit && Alert.alert('Inform', 'Save Changes.')
         isEdit ? updateTask(task.id, task) : addTask(task);
         setTask({
             id: Date.now().toString(),
