@@ -3,11 +3,11 @@ import React from 'react'
 import { s, vs } from 'react-native-size-matters'
 import Loader from './Loader'
 
-const Button = ({ title, sendData, loading }) => {
+const Button = ({ title,onPress, loading }) => {
 
 
     return (
-        <TouchableOpacity style={styles.button} onPress={() => sendData()}>
+        <TouchableOpacity style={[styles.button]} onPress={onPress}>
             {
                 loading ?
                     <Loader /> :
@@ -28,11 +28,11 @@ const styles = StyleSheet.create({
         borderRadius: s(40),
         alignSelf: "center",
         paddingHorizontal: s(40),
-        paddingVertical: vs(15),
-        width:s(230),
+        paddingVertical: vs(10),
+        // width:s(230),
         height:vs(50),
         elevation:15,
-        marginTop: vs(40),
+        marginTop: vs(10),
     },
     buttontext: {
         fontSize: 18,

@@ -9,7 +9,7 @@ import SocialMediaPlatform from '../components/SocialMediaPlatform'
 import Heading from '../components/Heading'
 import SubTitle from '../components/SubTitle'
 import { useNavigation } from '@react-navigation/native'
-import { createUserWithEmailAndPassword, getAuth } from '@react-native-firebase/auth'
+import { createUserWithEmailAndPassword, getAuth, sendEmailVerification } from '@react-native-firebase/auth'
 
 const SignUp = () => {
     const [loading, setloading] = useState(false)
@@ -18,27 +18,27 @@ const SignUp = () => {
     const navigation = useNavigation();
 
 
-     function displayErrorMessage(errorCode, errorMessage) {
-            switch (errorCode) {
-                case "auth/invalid-email":
-                    Alert.alert("Invalid email address.");
-                    break;
-                case "auth/user-not-found":
-                    Alert.alert("User not found. Please check your email address.");
-                    break;
-                case "auth/wrong-password":
-                    Alert.alert("Incorrect password. Please try again.");
-                    break;
-                case "auth/email-already-in-use":
-                    Alert.alert("Email address already in use. Please try another email address.");
-                    break;
-                case "auth/weak-password":
-                    Alert.alert("Password is too weak. Please use a stronger password.");
-                    break;
-                default:
-                    Alert.alert(errorMessage);
-            }
+    function displayErrorMessage(errorCode, errorMessage) {
+        switch (errorCode) {
+            case "auth/invalid-email":
+                Alert.alert("Invalid email address.");
+                break;
+            case "auth/user-not-found":
+                Alert.alert("User not found. Please check your email address.");
+                break;
+            case "auth/wrong-password":
+                Alert.alert("Incorrect password. Please try again.");
+                break;
+            case "auth/email-already-in-use":
+                Alert.alert("Email address already in use. Please try another email address.");
+                break;
+            case "auth/weak-password":
+                Alert.alert("Password is too weak. Please use a stronger password.");
+                break;
+            default:
+                Alert.alert(errorMessage);
         }
+    }
 
 
     const validate = () => {
@@ -54,29 +54,48 @@ const SignUp = () => {
     }
     const SignUpHandler = async () => {
         Keyboard.dismiss()
-        setloading(true)
         if (validate()) {
-            await createUserWithEmailAndPassword(getAuth(), email, password).then((userCredential) => {
-                const user = userCredential.user;
-                Alert.alert("Siggned up as:", user.email)
-                if (userCredential.doc != []) {
-                    Alert.alert("Sign up Sussessfully.")
-                    navigation.navigate("Login")
-                }
-                else{
-                    setloading(false)
-                }
-            }).catch((error) => {
+            try {
+                setloading(true)
+                const userCredential = await createUserWithEmailAndPassword(getAuth(), email, password);
+                 const v = await sendEmailVerification(userCredential.user);
+                 console.log("userCredential",userCredential);
+                 console.log('v:',v)
+                Alert.alert(
+                    'Verification Email Sent',
+                    `A verification email has been sent to ${email}. Please verify your email to continue.`
+                );
+            }
+            catch (error) {
+                Alert.alert('Error', error.message);
+            }
+            finally {
                 setloading(false)
-                const errorCode = error.code;
-                const errorMessage = error.message;
-                console.error("Sign in error:", errorCode, errorMessage);
-                displayErrorMessage(errorCode, errorMessage);
-            })
+
+            }
+            // await createUserWithEmailAndPassword(getAuth(), email, password).then((userCredential) => {
+            //     firebase.auth().currentUser.sendEmailVerification(userCredential.user)
+            //     Alert.alert("Check Email"," Verfication Link Send on Email")
+            //     const user = userCredential.user;
+            //     Alert.alert("Siggned up as:", user.email)
+            //     if (userCredential.doc != []) {
+            //         Alert.alert("Sign up Sussessfully.")
+            //         navigation.navigate("Login")
+            //     }
+            //     else {
+            //         setloading(false)
+            //     }
+            // }).catch((error) => {
+            //     setloading(false)
+            //     const errorCode = error.code;
+            //     const errorMessage = error.message;
+            //     console.error("Sign in error:", errorCode, errorMessage);
+            //     displayErrorMessage(errorCode, errorMessage);
+            // })
 
 
         }
-        else{
+        else {
             setloading(false)
             Alert.alert("Please fill all required fileds")
         }
@@ -108,7 +127,7 @@ const SignUp = () => {
                 onChangeText={(txt) => setpassword(txt)} />
 
             {/* SIGN UP BUTTON */}
-            <Button title={"Sign up"} sendData={SignUpHandler} loading={loading} />
+            <Button title={"Sign up"} onPress={SignUpHandler} loading={loading} />
 
 
             {/* SING UP WITH PLATFORMA HEADING*/}
@@ -153,8 +172,6 @@ const styles = StyleSheet.create({
         alignSelf: "center",
         color: "gray",
         fontSize: s(14),
-        // position: "absolute",
-        // bottom: vs(25),
         marginTop: vs(35)
 
     },

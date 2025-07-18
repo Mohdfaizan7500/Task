@@ -1,26 +1,19 @@
-import { DeviceEventEmitter, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { useContext, useState } from 'react'
+import { ColorPatel } from '../../src/assets/ColorPatel'
+import { s, vs } from 'react-native-size-matters'
 import MoreIcon from 'react-native-vector-icons/Octicons';
 import LineIcon from 'react-native-vector-icons/Feather';
 import SearchIcon from 'react-native-vector-icons/FontAwesome';
-import { ColorPatel } from '../assets/ColorPatel'
-import { s, vs } from 'react-native-size-matters';
-import { AppContext } from '../../App';
-
+import { TextInput } from 'react-native';
+import { TaskContext } from '../TaskProvider';
 const Header = () => {
+    const { tasks, searchTasks, } = useContext(TaskContext);
 
-    const { SearchHandle } = useContext(AppContext)
     const [SearchTodo, setSearchTodo] = useState('')
+    const [searchQuery, setSearchQuery] = useState('');
 
-
-
-    const callEd = (txt) => {
-        // console.log(SearchTodo)
-        // SearchHandle(SearchTodo)
-        DeviceEventEmitter.emit("SearchTodo", txt)
-    }
-
-
+    const filteredTasks = searchQuery ? searchTasks(searchQuery) : tasks;
 
     const date = () => {
 
@@ -37,20 +30,26 @@ const Header = () => {
                 </TouchableOpacity>
                 <View style={styles.SearchConatiner}>
                     <SearchIcon name="search" size={16} color={'gray'} />
-                    <TextInput style={styles.SearchField} value={SearchTodo}
+                    {/* <TextInput style={styles.SearchField} value={SearchTodo}
                         onChangeText={(txt) => { setSearchTodo(txt), callEd(txt) }}
+                    /> */}
+                    <TextInput style={styles.SearchField} placeholder="Search tasks..."
+                        value={searchQuery}
+                        placeholderTextColor={'gray'}
+                        onChangeText={setSearchQuery}
                     />
                 </View>
                 <TouchableOpacity style={styles.LineContainer}>
                     <LineIcon name="more-horizontal" size={25} color={ColorPatel.Bacground} />
                 </TouchableOpacity>
+
+
             </View>
             <Text style={styles.Today}>Today {date()}</Text>
             <Text style={styles.Mytask}>My Tasks </Text>
             <View style={styles.backCircle}>
 
             </View>
-
         </View>
     )
 }

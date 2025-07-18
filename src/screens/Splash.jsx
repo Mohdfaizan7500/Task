@@ -1,9 +1,8 @@
-import { Alert, Pressable, StyleSheet, Text, Touchable, TouchableOpacity, View } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import { StyleSheet, Text, View } from 'react-native'
+import React from 'react'
 import Logo from '../components/Logo'
 import Circle from '../components/Circle'
 import RightArrow from '../components/RightArrow'
-import { beginAsyncEvent } from 'react-native/Libraries/Performance/Systrace'
 import { s, vs } from 'react-native-size-matters'
 import ProcessingCircle from '../components/ProcessingCircle'
 import { useNavigation } from '@react-navigation/native'
@@ -11,25 +10,16 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 
 const Splash = () => {
     const navigation = useNavigation();
-    const [Active, setActive] = useState('')
 
-    
-    useEffect(()=>{
-        checkLogin();
-
-    },[])
-
-    const checkLogin = async()=>{
-    const id = await AsyncStorage.getItem("UID");
-    if (id !== null) {
-     navigation.navigate("Main");
-
+    const checkLogin = async () => {
+        const id = await AsyncStorage.getItem("UID");
+        if (id !== null) {
+            navigation.navigate("Home");
+        }
+        else {
+            navigation.navigate('Signup')
+        }
     }
-    else {
-      navigation.navigate('Signup')
-
-    }
-  }
     return (
         <View style={styles.container}>
             <Logo />
@@ -42,8 +32,8 @@ const Splash = () => {
                 <ProcessingCircle color={"gray"} />
                 <ProcessingCircle color={"#686bf0"} />
             </View>
-            <Circle sendData={checkLogin}/>
-            <RightArrow sendData={checkLogin}/>
+            <Circle sendData={checkLogin} />
+            <RightArrow sendData={checkLogin} />
         </View>
     )
 }
@@ -73,7 +63,7 @@ const styles = StyleSheet.create({
     },
     ProcessingBar: {
         flexDirection: "row",
-        gap: 15,
+        gap: s(15),
         marginStart: s(40),
         marginTop: vs(15)
 

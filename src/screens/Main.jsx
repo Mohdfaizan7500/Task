@@ -12,6 +12,7 @@ const Main = () => {
   // const route = useRoute();
   // const { button } = route.params;
   const [Selected, setSelected] = useState('')
+  const [UpdateId, setUpdateId] = useState('')
 
   
   const handleData = (childData) => {
@@ -21,14 +22,16 @@ const Main = () => {
   }
    const Updatehandle = (childData) => {
     setSelected(2)
-    console.log("main screen state update",childData)
+    console.log("id on main screen:",childData)
+    setUpdateId(childData)
+    // console.log("main screen state update",childData)
 
   }
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <Header/>
       {Selected == 1 && <List sendData={Updatehandle} /> }
-      {Selected == 2 && <AddTask title={'Add Task'}  />}
+      {Selected == 2 && <AddTask title={'Add Task'} UpdateId={UpdateId}  />}
       {Selected == 3 && <Calender title={'Log out'}  />}
 
       <Footer sendData={handleData} />

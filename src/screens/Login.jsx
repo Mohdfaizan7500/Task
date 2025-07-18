@@ -1,5 +1,5 @@
 import { Alert, Keyboard, StyleSheet, Text, TextInput, View } from 'react-native'
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import Logo from '../components/Logo'
 import { s, vs } from 'react-native-size-matters'
@@ -11,14 +11,16 @@ import SubTitle from '../components/SubTitle'
 import { useNavigation, useRoute } from '@react-navigation/native'
 import { getAuth, signInWithEmailAndPassword } from '@react-native-firebase/auth'
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import { AppContext } from '../../App'
 
 const Login = () => {
-    // const navigation = useNavigation();
 
     const [loading, setloading] = useState(false)
     const [email, setEmail] = useState('')
     const [password, setpassword] = useState('')
     const navigation = useNavigation();
+
+    const {fachData}  = useContext(AppContext)
 
     function displayErrorMessage(errorCode, errorMessage) {
         switch (errorCode) {
@@ -73,10 +75,10 @@ const Login = () => {
 
     const goToNext = async (uid) => {
         await AsyncStorage.setItem('UID', uid);
+        fachData()
         setloading(false)
-        navigation.navigate("Main");
+        navigation.navigate("Home");
         Alert.alert("Log in Successfully.");
-
     }
     const validate = () => {
         let isValid = true
@@ -102,7 +104,7 @@ const Login = () => {
             <TextInput style={styles.InputField}
                 value={password}
                 onChangeText={(txt) => setpassword(txt)} />
-            <Button title={"Log in"} sendData={LoginButton} loading={loading} />
+            <Button title={"Log in"} onPress={LoginButton} loading={loading} />
             <SocialMediaPlatform title={"Log in"} />
             <SocialContainer />
             <Text style={styles.LoginLink}>Don't have an account?

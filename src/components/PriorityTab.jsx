@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 import { s, vs } from 'react-native-size-matters'
 import { ColorPatel } from '../assets/ColorPatel'
 
-const PriorityTab = ({ sendPriority ,Activetab,setActivetab}) => {
+const PriorityTab = ({ sendPriority, Activetab, setActivetab, disabled }) => {
     // const [Activetab, setActivetab] = useState('')
 
     const tabsArr = ['Low', 'Medium', 'High']
@@ -30,8 +30,7 @@ const PriorityTab = ({ sendPriority ,Activetab,setActivetab}) => {
 
                     return (
                         <TouchableOpacity
-
-
+                            disabled={disabled}
                             onPress={() => handleClick(tabName)}
                             key={tabName.toString()}
                             style={[styles.tabButton,
@@ -55,15 +54,11 @@ export default PriorityTab
 const styles = StyleSheet.create({
     container: {
         height: vs(40),
-        // borderRadius: s(12),
-        // backgroundColor: "red",
         flexDirection: "row",
         alignItems: "center",
-        // padding: s(4),
         marginTop: vs(5),
         width: "95%",
         alignSelf: "center",
-        // flex:1,
         gap: s(10)
     },
     tabButton: {
@@ -72,7 +67,6 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
         flex: 1,
-        // backgroundColor:"red"
     },
     ButtonText: {
         fontSize: s(14),
