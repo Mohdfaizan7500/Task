@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View } from 'react-native'
-import React from 'react'
+import React, { useState } from 'react'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { NavigationContainer } from '@react-navigation/native';
 import Splash from './Splash';
@@ -8,11 +8,20 @@ import Login from './Login';
 import Main from './Main';
 import Home from './Home';
 import AddTask from './AddTask';
+import { getAuth } from '@react-native-firebase/auth';
+const Stack = createNativeStackNavigator();
+
 
 const Navigation = () => {
+  // const [isUserLogin, setisUserLogin] = useState(false)
 
 
-  const Stack = createNativeStackNavigator();
+  // getAuth().onAuthStateChanged(user => {
+  //   if (user !== null) {
+  //     setisUserLogin(true)
+  //   }
+  // })
+
   return (
     <NavigationContainer>
       <Stack.Navigator >
@@ -20,7 +29,6 @@ const Navigation = () => {
         <Stack.Screen name='Signup' component={SignUp} options={{ headerShown: false }} />
         <Stack.Screen name='Login' component={Login} options={{ headerShown: false }} />
         <Stack.Screen name='Home' component={Home} options={{ headerShown: false }} />
-        {/* <Stack.Screen name='Main' component={Main} options={{headerShown:false}}/> */}
         <Stack.Screen name='AddTask' component={AddTask} />
 
 

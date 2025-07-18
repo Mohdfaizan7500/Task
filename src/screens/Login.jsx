@@ -9,7 +9,7 @@ import SocialMediaPlatform from '../components/SocialMediaPlatform'
 import Heading from '../components/Heading'
 import SubTitle from '../components/SubTitle'
 import { useNavigation, useRoute } from '@react-navigation/native'
-import { getAuth, signInWithEmailAndPassword } from '@react-native-firebase/auth'
+import { getAuth, signInWithEmailAndPassword ,signOut} from '@react-native-firebase/auth'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { AppContext } from '../../App'
 
@@ -20,7 +20,7 @@ const Login = () => {
     const [password, setpassword] = useState('')
     const navigation = useNavigation();
 
-    const {fachData}  = useContext(AppContext)
+    const { fachData } = useContext(AppContext)
 
     function displayErrorMessage(errorCode, errorMessage) {
         switch (errorCode) {
@@ -49,14 +49,32 @@ const Login = () => {
         Keyboard.dismiss()
         if (validate()) {
             await signInWithEmailAndPassword(getAuth(), email, password)
-                .then((userCredential) => {
-                    const user = userCredential.user;
-                    if (userCredential.doc != []) {
-                        goToNext(user.uid)
-                    }
-                    else {
+                .then(async(userCredential) => {
+                    if (userCredential.user.emailVerified) {
+                        navigation.navigate("Home");
                         setloading(false)
+                        setEmail('');
+                        setpassword('')
+
                     }
+                    else{
+                        Alert.alert('Alert',
+                            'Please verfiy your email.'
+                        )
+                        await sendEmailVerification(userCredential.user);
+                        await signOut(getAuth())
+                        setloading(false)
+                        setEmail('');
+                        setpassword('')
+                    }
+
+                    // const user = userCredential.user;
+                    // if (userCredential.doc != []) {
+                    //     goToNext(user.uid)
+                    // }
+                    // else {
+                    //     setloading(false)
+                    // }
 
                 }).catch((error) => {
                     setloading(false)

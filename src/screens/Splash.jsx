@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View } from 'react-native'
-import React from 'react'
+import React, { useState } from 'react'
 import Logo from '../components/Logo'
 import Circle from '../components/Circle'
 import RightArrow from '../components/RightArrow'
@@ -7,18 +7,29 @@ import { s, vs } from 'react-native-size-matters'
 import ProcessingCircle from '../components/ProcessingCircle'
 import { useNavigation } from '@react-navigation/native'
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import { getAuth } from '@react-native-firebase/auth'
 
 const Splash = () => {
     const navigation = useNavigation();
 
+
     const checkLogin = async () => {
-        const id = await AsyncStorage.getItem("UID");
-        if (id !== null) {
-            navigation.navigate("Home");
-        }
-        else {
-            navigation.navigate('Signup')
-        }
+         getAuth().onAuthStateChanged(user => {
+            if (user !== null) {
+              navigation.navigate("Home")
+            }
+            else
+            {
+                navigation.navigate("Signup")
+            }
+          })
+        // const id = await AsyncStorage.getItem("UID");
+        // if (id !== null) {
+        //     navigation.navigate("Home");
+        // }
+        // else {
+        //     navigation.navigate('Signup')
+        // }
     }
     return (
         <View style={styles.container}>

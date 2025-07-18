@@ -9,7 +9,7 @@ import SocialMediaPlatform from '../components/SocialMediaPlatform'
 import Heading from '../components/Heading'
 import SubTitle from '../components/SubTitle'
 import { useNavigation } from '@react-navigation/native'
-import { createUserWithEmailAndPassword, getAuth, sendEmailVerification } from '@react-native-firebase/auth'
+import { createUserWithEmailAndPassword, getAuth, sendEmailVerification, signOut } from '@react-native-firebase/auth'
 
 const SignUp = () => {
     const [loading, setloading] = useState(false)
@@ -59,12 +59,15 @@ const SignUp = () => {
                 setloading(true)
                 const userCredential = await createUserWithEmailAndPassword(getAuth(), email, password);
                  const v = await sendEmailVerification(userCredential.user);
+                 const Signout  = await signOut(getAuth());
+                 console.log("SignOut ",Signout)
                  console.log("userCredential",userCredential);
                  console.log('v:',v)
                 Alert.alert(
                     'Verification Email Sent',
                     `A verification email has been sent to ${email}. Please verify your email to continue.`
                 );
+                navigation.navigate('Login')
             }
             catch (error) {
                 Alert.alert('Error', error.message);
