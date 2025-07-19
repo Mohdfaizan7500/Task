@@ -10,7 +10,7 @@ const PriorityBadge = ({ priority }) => {
     };
     return (
         <View style={[styles.priorityBadge, { backgroundColor: colorMap[priority] }]}>
-            <Text style={styles.priorityText}>{priority.toUpperCase()}</Text>
+            <Text style={styles.priorityText}>{priority}</Text>
         </View>
     );
 }
@@ -24,7 +24,7 @@ const styles = StyleSheet.create({
         borderRadius: 12,
     },
     priorityText: {
-        color: 'white',
+        color: '#fff',
         fontSize: 12,
         fontWeight: 'bold',
     },

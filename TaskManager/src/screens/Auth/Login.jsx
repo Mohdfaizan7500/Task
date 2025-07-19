@@ -47,7 +47,7 @@ const Login = ({ navigation }) => {
         setEmail('')
         setPassword('')
          Alert.alert('Alert',
-          'Login.')
+          'Login Successfully.')
       }
       else {
         Alert.alert('Alert',

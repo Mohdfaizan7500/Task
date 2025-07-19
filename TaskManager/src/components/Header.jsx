@@ -1,89 +1,97 @@
-import { DeviceEventEmitter, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
-import React, { useContext, useState } from 'react'
+import { Alert, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import React, { useState } from 'react';
 import MoreIcon from 'react-native-vector-icons/Octicons';
 import LineIcon from 'react-native-vector-icons/Feather';
 import SearchIcon from 'react-native-vector-icons/FontAwesome';
 import { s, vs } from 'react-native-size-matters';
-import { AppContext } from '../../App';
 import { ColorPatel } from '../../../src/assets/ColorPatel';
+import { signOut } from '@react-native-firebase/auth';
+import { auth } from '../../firebase/firebaseConfig';
 
-const Header = () => {
+const Header = ({ navigation, headerSearch }) => {
+    const [searchQuery, setSearchQuery] = useState('');
 
-    // const { SearchHandle } = useContext(AppContext)
-    const [SearchTodo, setSearchTodo] = useState('')
+    const logout = async () => {
+        try {
+            await signOut(auth);
+            navigation.navigate("Login");
+        } catch (error) {
+            console.log("Error:", error);
+            Alert.alert("Error");
+        }
+    };
 
+    const sendData = (txt) => {
+        headerSearch(txt);
+    };
 
-
-    const callEd = (txt) => {
-        // console.log(SearchTodo)
-        // SearchHandle(SearchTodo)
-        // DeviceEventEmitter.emit("SearchTodo", txt)
-    }
-
-
-
-    const date = () => {
-
+    const getCurrentDate = () => {
         const currentDate = new Date();
         const options = { day: 'numeric', month: 'long', year: 'numeric' };
-        const formattedDate = currentDate.toLocaleDateString('en-GB', options);
-        return formattedDate
-    }
+        return currentDate.toLocaleDateString('en-GB', options);
+    };
+
     return (
-        <View style={styles.ViewBG}>
-            <View style={styles.Container}>
+        <View style={styles.viewBG}>
+            <View style={styles.container}>
                 <TouchableOpacity>
                     <MoreIcon name="apps" size={30} color={ColorPatel.Bacground} />
                 </TouchableOpacity>
-                <View style={styles.SearchConatiner}>
+                <View style={styles.searchContainer}>
                     <SearchIcon name="search" size={16} color={'gray'} />
-                    <TextInput style={styles.SearchField} value={SearchTodo}
-                        onChangeText={(txt) => { setSearchTodo(txt), callEd(txt) }}
+                    <TextInput
+                        style={styles.searchField}
+                        value={searchQuery}
+                        onChangeText={(txt) => {
+                            sendData(txt);
+                            setSearchQuery(txt);
+                        }}
                     />
                 </View>
-                <TouchableOpacity style={styles.LineContainer}>
+                <TouchableOpacity
+                    style={styles.lineContainer}
+                    onPress={() => {
+                        Alert.alert("Alert", 'Are you sure you want to logout?', [
+                            { text: "Cancel", style: "cancel" },
+                            { text: "Logout", onPress: logout }
+                        ]);
+                    }}
+                >
                     <LineIcon name="more-horizontal" size={25} color={ColorPatel.Bacground} />
                 </TouchableOpacity>
             </View>
-            <Text style={styles.Today}>Today {date()}</Text>
-            <Text style={styles.Mytask}>My Tasks </Text>
-            <View style={styles.backCircle}>
-
-            </View>
-
+            <Text style={styles.today}>Today {getCurrentDate()}</Text>
+            <Text style={styles.myTask}>My Tasks</Text>
+            <View style={styles.backCircle} />
         </View>
-    )
-}
+    );
+};
 
-export default Header
+export default Header;
 
 const styles = StyleSheet.create({
-    ViewBG: {
+    viewBG: {
         backgroundColor: ColorPatel.AppColor,
         paddingLeft: s(20),
         paddingTop: vs(10),
         paddingRight: s(10),
         height: vs(120),
         overflow: "hidden",
-        // borderBottomLeftRadius:s(20),
-        // borderBottomRightRadius:s(20)
     },
-    Container: {
+    container: {
         flexDirection: "row",
         alignItems: "center",
-        zIndex: 1
-
-        // height:60
+        zIndex: 1,
     },
-    LineContainer: {
+    lineContainer: {
         height: s(40),
         width: s(40),
         backgroundColor: ColorPatel.Back,
         borderRadius: s(30),
         justifyContent: "center",
-        alignItems: "center"
+        alignItems: "center",
     },
-    SearchConatiner: {
+    searchContainer: {
         height: vs(30),
         backgroundColor: ColorPatel.Bacground,
         borderRadius: 20,
@@ -95,31 +103,27 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         gap: s(5),
         paddingRight: s(15),
-        zIndex: 1
+        zIndex: 1,
     },
-    SearchField: {
-        // backgroundColor:'red',
-        justifyContent: "center",
+    searchField: {
         flex: 1,
-        height: s(30),
-        fontSize: s(12),
-        paddingBottom: 0,
-        paddingTop: 0,
-        color: "black"
+        height: s(40),
+        fontSize: s(14),
+        color: "black",
     },
-    Today: {
+    today: {
         fontSize: s(12),
         fontWeight: "400",
         color: ColorPatel.Bacground,
         marginTop: vs(10),
-        zIndex: 1
+        zIndex: 1,
     },
-    Mytask: {
+    myTask: {
         fontSize: s(18),
         fontWeight: '700',
         color: ColorPatel.Bacground,
         marginBottom: s(10),
-        zIndex: 1
+        zIndex: 1,
     },
     backCircle: {
         backgroundColor: ColorPatel.Back,
@@ -128,6 +132,6 @@ const styles = StyleSheet.create({
         position: "absolute",
         borderRadius: s(100),
         bottom: s(-35),
-        left: s(-30)
-    }
-})
+        left: s(-30),
+    },
+});

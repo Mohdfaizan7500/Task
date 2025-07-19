@@ -22,11 +22,11 @@ const TodoApp = () => {
           items.push({ id: doc.id, ...doc.data() });
         });
         console.log(items)
-        // setTodos(items);
+        setTodos(items);
       });
       console.log("unsubscribe: ",unsubscribe)
 
-      // return () => unsubscribe();
+      return () => unsubscribe();
     }
   }, []);
 
