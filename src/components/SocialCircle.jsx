@@ -19,6 +19,7 @@ const styles = StyleSheet.create({
         height:s(50),
         borderRadius:s(50),
         justifyContent:"center",
-        alignItems:"center"
+        alignItems:"center",
+        elevation:10
     }
 })
