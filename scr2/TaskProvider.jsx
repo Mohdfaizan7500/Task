@@ -35,7 +35,24 @@ const data = [{
 export const TaskProvider = ({ children }) => {
   const [tasks, setTasks] = useState([...data])
 
-  const addTask = (task) => {
+  const addTask =async (task) => {
+    
+    try {
+      await addDoc(collection(firestore, 'todos'), {
+
+        
+        title: task.title.trim(),
+        date: new Date(),
+        description:task.description,
+        duedate:task.duedate,
+        isDne:false,
+        priority:task.priority,
+        userId: auth.currentUser.uid,
+      });
+
+    } catch (error) {
+      console.log('Error adding todo: ', error);
+    }
     setTasks([...tasks, task])
     Alert.alert('Inform', 'Add successfully.')
   };

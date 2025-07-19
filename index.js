@@ -10,5 +10,6 @@ import Login from './src/screens/Login';
 import Splash from './src/screens/Splash';
 import Home from './src/screens/Home';
 import Todo from './scr2/Todo';
+import TodoAppContainer from './todo/TodoApp/Navigation';
 
-AppRegistry.registerComponent(appName, () => App);
+AppRegistry.registerComponent(appName, () => TodoAppContainer);

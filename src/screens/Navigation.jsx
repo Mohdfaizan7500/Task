@@ -14,14 +14,7 @@ const Stack = createNativeStackNavigator();
 
 
 const Navigation = () => {
-  // const [isUserLogin, setisUserLogin] = useState(false)
-
-
-  // getAuth().onAuthStateChanged(user => {
-  //   if (user !== null) {
-  //     setisUserLogin(true)
-  //   }
-  // })
+ 
 
   return (
     <NavigationContainer>
