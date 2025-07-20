@@ -1,16 +1,21 @@
 import { Alert, Keyboard, Pressable, SafeAreaView, StyleSheet, Text, TextInput, View } from 'react-native'
 import React, { useState } from 'react'
-import Logo from '../../../../src/components/Logo'
-import Heading from '../../../../src/components/Heading'
+// import Heading from '../../../../src/components/Heading'
 import { s, vs } from 'react-native-size-matters'
-import SubTitle from '../../../../src/components/SubTitle'
-import Button from '../../../../src/components/Button'
-import SocialMediaPlatform from '../../../../src/components/SocialMediaPlatform'
-import SocialContainer from '../../../../src/components/SocialContainer'
+// import SubTitle from '../../../../src/components/SubTitle'
+// import Button from '../../../../src/components/Button'
+// import SocialMediaPlatform from '../../../../src/components/SocialMediaPlatform'
+// import SocialContainer from '../../../../src/components/SocialContainer'
 import { sendEmailVerification, signInWithEmailAndPassword, signOut } from '@react-native-firebase/auth'
 import { auth } from '../../../firebase/firebaseConfig'
 import OpenEyeIcon from 'react-native-vector-icons/Octicons';
 import CloseEyeIcon from 'react-native-vector-icons/Octicons';
+import Logo from '../../components/Logo'
+import Heading from '../../components/Heading'
+import SubTitle from '../../components/SubTitle'
+import Button from '../../components/Button'
+import SocialMediaPlatform from '../../components/SocialMediaPlatform'
+import SocialContainer from '../../components/SocialContainer'
 
 
 const Login = ({ navigation }) => {

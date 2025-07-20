@@ -1,14 +1,20 @@
 import { Alert, SafeAreaView, StyleSheet, Text, TextInput, View } from 'react-native'
 import React, { useState } from 'react'
 import { s, vs } from 'react-native-size-matters'
-import Logo from '../../../../src/components/Logo'
-import Heading from '../../../../src/components/Heading'
-import SubTitle from '../../../../src/components/SubTitle'
-import Button from '../../../../src/components/Button'
-import SocialMediaPlatform from '../../../../src/components/SocialMediaPlatform'
-import SocialContainer from '../../../../src/components/SocialContainer'
+// import Logo from '../../../../src/components/Logo'
+// import Heading from '../../../../src/components/Heading'
+// import SubTitle from '../../../../src/components/SubTitle'
+// import Button from '../../../../src/components/Button'
+// import SocialMediaPlatform from '../../../../src/components/SocialMediaPlatform'
+// import SocialContainer from '../../../../src/components/SocialContainer'
 import { auth } from '../../../firebase/firebaseConfig';
 import { createUserWithEmailAndPassword, getAuth, sendEmailVerification, signOut } from '@react-native-firebase/auth'
+import Logo from '../../components/Logo'
+import Heading from '../../components/Heading'
+import SubTitle from '../../components/SubTitle'
+import Button from '../../components/Button'
+import SocialMediaPlatform from '../../components/SocialMediaPlatform';
+import SocialContainer from '../../components/SocialContainer';
 const Signup = ({ navigation }) => {
     const [Email, setEmail] = useState('');
     const [Password, setPassword] = useState('')

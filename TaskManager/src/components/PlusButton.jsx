@@ -1,9 +1,9 @@
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { StyleSheet, TouchableOpacity, View } from 'react-native'
 import React from 'react'
 import { s } from 'react-native-size-matters'
-import { ColorPatel } from '../../../src/assets/ColorPatel'
 import { vs } from 'react-native-size-matters'
 import BackIcon from 'react-native-vector-icons/Entypo';
+import { ColorPatel } from '../assets/ColorPatel';
 
 
 const PlusButton = ({onPress}) => {

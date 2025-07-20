@@ -2,17 +2,20 @@ import { Alert, FlatList, Keyboard, SafeAreaView, StyleSheet, Text, TouchableOpa
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import Header from '../../components/Header';
 import PlusButton from '../../components/PlusButton';
-import Checkbox from '../../../../scr2/components/CheckBox';
+// import Checkbox from '../../../../scr2/components/CheckBox';
 import { useTodo } from './TodoProvider';
-import PriorityBadge from '../../../../scr2/components/PriorityBadge';
+// import PriorityBadge from '../../../../scr2/components/PriorityBadge';
 import { GestureHandlerRootView, Swipeable } from 'react-native-gesture-handler';
 import EditIcon from 'react-native-vector-icons/Feather';
 import DeleteIcon from 'react-native-vector-icons/MaterialIcons';
 import TodoModal from '../../components/TodoModal';
 import { Modal } from 'react-native';
 import { ActivityIndicator } from 'react-native';
-import { ColorPatel } from '../../../../src/assets/ColorPatel';
+// import { ColorPatel } from '../../../../src/assets/ColorPatel';
 import { useAuth } from '../Auth/AuthContext';
+import Checkbox from '../../components/CheckBox';
+import PriorityBadge from '../../components/PriorityBadge';
+import { ColorPatel } from '../../assets/ColorPatel';
 
 
 const TodoList = ({ navigation }) => {

@@ -3,10 +3,10 @@ import React, { useState } from 'react'
 import { s, vs } from 'react-native-size-matters'
 import { TouchableOpacity } from 'react-native'
 import BackIcon from 'react-native-vector-icons/Ionicons';
-import { ColorPatel } from '../../../../src/assets/ColorPatel';
 import { sendPasswordResetEmail } from '@react-native-firebase/auth';
 import { startAfter } from '@react-native-firebase/firestore';
 import { auth } from '../../../firebase/firebaseConfig';
+import { ColorPatel } from '../../assets/ColorPatel';
 
 const ResetPassword = ({ navigation }) => {
   const [Email, setEmail] = useState('');
