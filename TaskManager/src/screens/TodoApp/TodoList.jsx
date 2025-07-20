@@ -8,34 +8,40 @@ import PriorityBadge from '../../../../scr2/components/PriorityBadge';
 import { GestureHandlerRootView, Swipeable } from 'react-native-gesture-handler';
 import EditIcon from 'react-native-vector-icons/Feather';
 import DeleteIcon from 'react-native-vector-icons/MaterialIcons';
+import TodoModal from '../../components/TodoModal';
+import { Modal } from 'react-native';
+import { ActivityIndicator } from 'react-native';
+import { ColorPatel } from '../../../../src/assets/ColorPatel';
+
 
 const TodoList = ({ navigation }) => {
-  const { task, updateTask, deleteTask, searchTasks } = useTodo();
+  const { task, updateTask, deleteTask, searchTasks, } = useTodo();
   const swipeableRow = useRef(null);
   const [currentlyActiveRow, setCurrentlyActiveRow] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
+  const [visible, setVisible] = useState(false)
+  const [ModalData, setModalData] = useState('')
+  const [loader, setLoader] = useState(false)
   const filteredTasks = searchQuery ? searchTasks(searchQuery) : task;
 
 
-  useEffect(() => {
-    const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () => {
-      setIsKeyboardVisible(true);
-    });
-    const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => {
-      setIsKeyboardVisible(false);
-    });
-    return () => {
-      keyboardDidShowListener.remove();
-      keyboardDidHideListener.remove();
-    };
-  }, []);
+
+
+  const toggleTaskmodal = (item) => {
+    setModalData(item)
+    setVisible(!visible)
+
+  }
 
   const toggleComplete = (task) => {
+    setLoader(true)
     updateTask(task.id, {
       ...task,
-      completed: !task.completed,
+      isDone: !task.isDone,
     });
+    setLoader(false)
+
   };
 
   const closeRow = useCallback(() => {
@@ -45,13 +51,13 @@ const TodoList = ({ navigation }) => {
     }
   }, [currentlyActiveRow]);
 
-  const confirmDelete = (id) => {
+  const confirmDelete = (item) => {
     Alert.alert(
       "Delete Task",
       "Are you sure you want to delete this task?",
       [
         { text: "Cancel", style: "cancel" },
-        { text: "Delete", onPress: () => deleteTask(id) },
+        { text: "Delete", onPress: () => deleteTask(item) },
       ]
     );
     closeRow();
@@ -71,7 +77,7 @@ const TodoList = ({ navigation }) => {
 
   const rightSwift = (item) => (
     <TouchableOpacity
-      onPress={() => confirmDelete(item.id)}
+      onPress={() => confirmDelete(item)}
       style={[styles.leftSwift, styles.rightSwift]}
     >
       <DeleteIcon name="delete" size={30} color="#fff" />
@@ -96,26 +102,34 @@ const TodoList = ({ navigation }) => {
         }
       }}
     >
-      <View style={[styles.taskCard, item.completed && styles.completedTask]}>
-        <View style={styles.taskRow}>
-          <Checkbox
-            checked={item.completed}
-            onPress={() => toggleComplete(item)}
-          />
-          <View style={styles.taskContent}>
-            <View style={styles.taskHeader}>
-              <Text style={[styles.taskTitle, item.completed && styles.completedText]}>
-                {item.title}
+      <TouchableOpacity
+        activeOpacity={0.8}
+        onLongPress={() => toggleTaskmodal(item)}>
+        <View style={[styles.taskCard, item.isDone && styles.completedTask]}>
+          <View style={styles.taskRow}>
+            <Checkbox
+              checked={item.isDone}
+              onPress={() => toggleComplete(item)}
+            />
+            <View style={styles.taskContent}>
+              <View style={styles.taskHeader}>
+                <Text style={[styles.taskTitle, item.isDone && styles.completedText]}>
+                  {item.title}
+                </Text>
+                <PriorityBadge priority={item.priority} />
+              </View>
+              <Text style={styles.taskDate}>Due: {item.date}</Text>
+              <Text
+                numberOfLines={1}
+                ellipsizeMode='tail'
+                style={[styles.taskDescription, item.isDone && styles.completedText]}>
+                {item.description}
               </Text>
-              <PriorityBadge priority={item.priority} />
+
             </View>
-            <Text style={[styles.taskDescription, item.completed && styles.completedText]}>
-              {item.description}
-            </Text>
-            <Text style={styles.taskDate}>Due: {item.date}</Text>
           </View>
         </View>
-      </View>
+      </TouchableOpacity>
     </Swipeable>
   );
 
@@ -142,6 +156,18 @@ const TodoList = ({ navigation }) => {
         !isKeyboardVisible &&
         <PlusButton onPress={() => navigation.navigate("AddTodo")} />
       }
+      <TodoModal visible={visible} onPress={toggleTaskmodal} item={ModalData} />
+      <Modal
+        transparent
+        visible={loader}
+      >
+        <View style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "rgba(0, 0, 0, 0.25)" }}>
+          <ActivityIndicator color={ColorPatel.AppColor} size={70} />
+
+
+        </View>
+      </Modal>
+
     </SafeAreaView>
   );
 };

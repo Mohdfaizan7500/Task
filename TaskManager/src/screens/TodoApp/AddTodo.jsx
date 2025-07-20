@@ -1,4 +1,4 @@
-import { Alert, Button, Modal, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { Alert, Button, Modal, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import React, { useContext, useState } from 'react'
 import { Calendar } from 'react-native-calendars';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -82,6 +82,11 @@ const AddTodo = ({ navigation, route }) => {
       return;
 
     }
+    if (!task.date) {
+      Alert.alert('Validation Error', 'Due Date is required');
+      return;
+
+    }
     isEdit && Alert.alert('Inform', 'Save Changes.')
     isEdit ? updateTask(task.id, task) : addTask(task);
     setTask({
@@ -97,114 +102,115 @@ const AddTodo = ({ navigation, route }) => {
   };
   return (
     <SafeAreaView style={styles.container}>
-      <Text style={styles.header}>{isEdit ? 'Edit Task' : 'Add New Task'}</Text>
-      <View style={styles.formContainer}>
-        <Text style={styles.label}>Title*</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Enter task title"
-          placeholderTextColor={'gray'}
-          value={task.title}
-          onChangeText={(text) => setTask({ ...task, title: text })}
-        />
-        <Text style={styles.label}>Description</Text>
-        <TextInput
-          style={[styles.input, styles.multilineInput]}
-          placeholderTextColor={'gray'}
-          placeholder="Enter task description"
-          multiline
-          value={task.description}
-          onChangeText={(text) => setTask({ ...task, description: text })}
-        />
-        <Text style={styles.label}>Priority</Text>
-        <View style={styles.priorityContainer}>
-          {['high', 'medium', 'low'].map((level) => (
-            <TouchableOpacity
-              key={level}
-              style={[
-                styles.priorityOption,
-                getPriorityButtonStyle(level)
-              ]}
-              onPress={() => setTask({ ...task, priority: level })}
-            >
-              <Text style={[
-                styles.priorityOptionText,
-                getPriorityTextStyle(level)
-              ]}>
-                {level.toUpperCase()}
-              </Text>
-            </TouchableOpacity>
-          ))}
+      <ScrollView>
+        <Text style={styles.header}>{isEdit ? 'Edit Task' : 'Add New Task'}</Text>
+        <View style={styles.formContainer}>
+          <Text style={styles.label}>Title*</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Enter task title"
+            placeholderTextColor={'gray'}
+            value={task.title}
+            onChangeText={(text) => setTask({ ...task, title: text })}
+          />
+          <Text style={styles.label}>Description</Text>
+          <TextInput
+            style={[styles.input, styles.multilineInput]}
+            placeholderTextColor={'gray'}
+            placeholder="Enter task description"
+            multiline
+            value={task.description}
+            onChangeText={(text) => setTask({ ...task, description: text })}
+          />
+          <Text style={styles.label}>Priority</Text>
+          <View style={styles.priorityContainer}>
+            {['high', 'medium', 'low'].map((level) => (
+              <TouchableOpacity
+                key={level}
+                style={[
+                  styles.priorityOption,
+                  getPriorityButtonStyle(level)
+                ]}
+                onPress={() => setTask({ ...task, priority: level })}
+              >
+                <Text style={[
+                  styles.priorityOptionText,
+                  getPriorityTextStyle(level)
+                ]}>
+                  {level.toUpperCase()}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+          <Text style={styles.label}>Due Date</Text>
+
+          <TouchableOpacity
+            style={styles.dateInput}
+            onPress={toggleCalendar}
+          >
+            <Text style={task.date ? styles.dateText : styles.placeholderText}>
+              {formatDisplayDate(task.date)}
+            </Text>
+            <MaterialIcons name="calendar-today" size={20} color="#6200ee" />
+          </TouchableOpacity>
         </View>
-        <Text style={styles.label}>Due Date</Text>
-
-        <TouchableOpacity
-          style={styles.dateInput}
-          onPress={toggleCalendar}
+        <Modal
+          visible={showCalendar}
+          animationType="slide"
+          transparent={true}
         >
-          <Text style={task.date ? styles.dateText : styles.placeholderText}>
-            {formatDisplayDate(task.date)}
-          </Text>
-          <MaterialIcons name="calendar-today" size={20} color="#6200ee" />
-        </TouchableOpacity>
-      </View>
-      <Modal
-        visible={showCalendar}
-        animationType="slide"
-        transparent={true}
-      >
 
-        <View style={styles.calendarModal}>
-          <View style={styles.calendarContainer}>
-            <Calendar
-              onDayPress={onDayPress}
-              markedDates={{
-                [tempSelectedDate]: { selected: true, selectedColor: '#6200ee' }
-              }}
-              theme={{
-                calendarBackground: '#ffffff',
-                selectedDayBackgroundColor: '#6200ee',
-                selectedDayTextColor: '#ffffff',
-                todayTextColor: '#6200ee',
-                arrowColor: '#6200ee',
-              }}
-            />
-
-            <View style={styles.calendarButtons}>
-              <TouchableOpacity
-                style={[styles.calendarButton, styles.cancelButton]}
-                onPress={() => {
-                  setTempSelectedDate(task.date); // Revert to original date
-                  setShowCalendar(false);
+          <View style={styles.calendarModal}>
+            <View style={styles.calendarContainer}>
+              <Calendar
+                onDayPress={onDayPress}
+                markedDates={{
+                  [tempSelectedDate]: { selected: true, selectedColor: '#6200ee' }
                 }}
-              >
-                <Text style={[styles.calendarButtonText, { color: "black" }]}>Cancel</Text>
-              </TouchableOpacity>
+                theme={{
+                  calendarBackground: '#ffffff',
+                  selectedDayBackgroundColor: '#6200ee',
+                  selectedDayTextColor: '#ffffff',
+                  todayTextColor: '#6200ee',
+                  arrowColor: '#6200ee',
+                }}
+              />
 
-              <TouchableOpacity
-                style={[styles.calendarButton, styles.confirmButton]}
-                onPress={handleConfirmDate}
-              >
-                <Text style={styles.calendarButtonText}>Confirm</Text>
-              </TouchableOpacity>
+              <View style={styles.calendarButtons}>
+                <TouchableOpacity
+                  style={[styles.calendarButton, styles.cancelButton]}
+                  onPress={() => {
+                    setTempSelectedDate(task.date); // Revert to original date
+                    setShowCalendar(false);
+                  }}
+                >
+                  <Text style={[styles.calendarButtonText, { color: "black" }]}>Cancel</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={[styles.calendarButton, styles.confirmButton]}
+                  onPress={handleConfirmDate}
+                >
+                  <Text style={styles.calendarButtonText}>Confirm</Text>
+                </TouchableOpacity>
+              </View>
             </View>
           </View>
+        </Modal>
+        <View style={styles.formActions}>
+
+          <Button
+            borderRadius={12}
+            title="Cancel"
+            color="#ff6b6b"
+            onPress={() => navigation.goBack()}
+          />
+          <Button
+            title={isEdit ? "Update Task" : "Add Task"}
+            onPress={handleSave}
+          />
         </View>
-      </Modal>
-      <View style={styles.formActions}>
-
-        <Button
-          borderRadius={12}
-          title="Cancel"
-          color="#ff6b6b"
-          onPress={() => navigation.goBack()}
-        />
-        <Button
-          title={isEdit ? "Update Task" : "Add Task"}
-          onPress={handleSave}
-        />
-      </View>
-
+      </ScrollView>
     </SafeAreaView>
   )
 }

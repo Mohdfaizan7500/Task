@@ -1,4 +1,4 @@
-import { Alert, SafeAreaView, StyleSheet, Text, TextInput, View } from 'react-native'
+import { Alert, Pressable, SafeAreaView, StyleSheet, Text, TextInput, View } from 'react-native'
 import React, { useState } from 'react'
 import Logo from '../../../../src/components/Logo'
 import Heading from '../../../../src/components/Heading'
@@ -9,12 +9,16 @@ import SocialMediaPlatform from '../../../../src/components/SocialMediaPlatform'
 import SocialContainer from '../../../../src/components/SocialContainer'
 import { sendEmailVerification, signInWithEmailAndPassword, signOut } from '@react-native-firebase/auth'
 import { auth } from '../../../firebase/firebaseConfig'
+import OpenEyeIcon from 'react-native-vector-icons/Octicons';
+import CloseEyeIcon from 'react-native-vector-icons/Octicons';
+
 
 const Login = ({ navigation }) => {
   const [Loading, setLoading] = useState(false)
   const [Email, setEmail] = useState('')
   const [Password, setPassword] = useState('')
   const [error, setError] = useState('')
+  const [PassVisible, setPassVisible] = useState(true)
 
 
 
@@ -46,7 +50,7 @@ const Login = ({ navigation }) => {
         setLoading(false)
         setEmail('')
         setPassword('')
-         Alert.alert('Alert',
+        Alert.alert('Alert',
           'Login Successfully.')
       }
       else {
@@ -103,10 +107,25 @@ const Login = ({ navigation }) => {
       <SubTitle subheading={"PASSWORD"} Forget={true} onPress={() => navigation.navigate("ResetPassword")} />
 
       {/* Password Input Field */}
-      <TextInput style={styles.InputField}
-        value={Password}
-        onChangeText={(txt) => [setPassword(txt), setError('')]} />
+      <View style={{ flexDirection: "row", alignItems: "center", marginTop: vs(5) }}>
+        <TextInput secureTextEntry={PassVisible} style={[styles.InputField, { marginTop: 0 }]}
+          value={Password}
+          onChangeText={(txt) => [setPassword(txt), setError('')]} />
+        <View style={{ position: "absolute", right: 15 }}>
+          {
+            PassVisible ?
+              <Pressable onPress={()=>setPassVisible(!PassVisible)}>
+                <CloseEyeIcon name="eye-closed" size={20} color="#000" />
+              </Pressable>
+              :
+              <Pressable onPress={()=>setPassVisible(!PassVisible)}>
+                <OpenEyeIcon name="eye" size={20} color="#000" />
+              </Pressable>
+          }
 
+        </View>
+
+      </View>
       {/* Login BUtton */}
       <Button title={"Log in"} onPress={handleLogin} loading={Loading} />
 
