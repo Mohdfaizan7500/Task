@@ -1,10 +1,9 @@
-import { Alert, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import React, { useState } from 'react';
+import { Alert, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import MoreIcon from 'react-native-vector-icons/Octicons';
 import LineIcon from 'react-native-vector-icons/Feather';
 import SearchIcon from 'react-native-vector-icons/FontAwesome';
 import { s, vs } from 'react-native-size-matters';
-// import { ColorPatel } from '../../../src/assets/ColorPatel';
 import { signOut } from '@react-native-firebase/auth';
 import { auth } from '../../firebase/firebaseConfig';
 import { ColorPatel } from '../assets/ColorPatel';

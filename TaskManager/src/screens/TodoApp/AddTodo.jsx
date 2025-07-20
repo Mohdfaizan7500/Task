@@ -1,17 +1,12 @@
-import { Alert, Button, Modal, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
-import React, { useContext, useEffect, useState } from 'react'
+import { Alert, Button, Modal, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
 import { Calendar } from 'react-native-calendars';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { useTodo } from './TodoProvider';
 
 const AddTodo = ({ navigation, route }) => {
-
-
-  // const [title, setTitle] = useState('')
-  // const [title, setTitle] = useState('')
   const { addTask, updateTask } = useTodo();
   const [showCalendar, setShowCalendar] = useState(false);
-  const [selectedDate, setSelectedDate] = useState('');
   const [tempSelectedDate, setTempSelectedDate] = useState('');
   const isEdit = route.params?.task;
   const [task, setTask] = useState(
@@ -20,27 +15,17 @@ const AddTodo = ({ navigation, route }) => {
       title: '',
       description: '',
       priority: 'medium',
-      date: new Date().toISOString().split('T')[0],
+      duedate: new Date().toISOString().split('T')[0],
     }
   );
 
   useEffect(() => {
-    console.log("Add comount mount")
-    console.log(task)
-
+    console.log("Add component mounted");
     return () => {
-      console.log("Add comount unmount")
+      console.log("Add component unmounted");
+    };
+  }, []);
 
-    }
-
-  }, [])
-
-  useEffect(()=>{
-    console.log("updated task:",task)
-
-  },[task.date])
-
-  // Format date for display (e.g., "Oct 15, 2023")
   const formatDisplayDate = (dateString) => {
     if (!dateString) return 'Select Date';
     const date = new Date(dateString);
@@ -57,15 +42,13 @@ const AddTodo = ({ navigation, route }) => {
 
   const onDayPress = (day) => {
     setTempSelectedDate(day.dateString);
-    console.log(day.dateString.split('-').reverse().join('/'))
   };
+
   const handleConfirmDate = () => {
-    setTask({ ...task, date: tempSelectedDate});
-    // console.log(task)
+    setTask({ ...task, duedate: tempSelectedDate });
     setShowCalendar(false);
   };
 
-  // Return appropriate color based on priority selection
   const getPriorityButtonStyle = (priorityLevel) => {
     const isSelected = task.priority === priorityLevel;
     return {
@@ -74,6 +57,7 @@ const AddTodo = ({ navigation, route }) => {
       borderWidth: isSelected ? 0 : 1
     };
   };
+
   const getPriorityTextStyle = (priorityLevel) => {
     const isSelected = task.priority === priorityLevel;
     return {
@@ -81,6 +65,7 @@ const AddTodo = ({ navigation, route }) => {
       fontWeight: isSelected ? 'bold' : 'normal'
     };
   };
+
   const getPriorityColor = (priority) => {
     const colors = {
       high: '#ff6b6b',
@@ -89,36 +74,32 @@ const AddTodo = ({ navigation, route }) => {
     };
     return colors[priority];
   };
+
   const handleSave = () => {
     if (!task.title.trim()) {
       Alert.alert('Validation Error', 'Title is required');
       return;
-
     }
     if (!task.description.trim()) {
       Alert.alert('Validation Error', 'Description is required');
       return;
-
     }
-    if (!task.date) {
+    if (!task.duedate) {
       Alert.alert('Validation Error', 'Due Date is required');
       return;
-
     }
-    isEdit && Alert.alert('Inform', 'Save Changes.')
+    isEdit && Alert.alert('Inform', 'Save Changes.');
     isEdit ? updateTask(task.id, task) : addTask(task);
     setTask({
       id: Date.now().toString(),
       title: '',
       description: '',
       priority: 'medium',
-      // date:tempSelectedDate,
-      date: new Date().toISOString().split('T')[0].split('-').reverse().join('/')
+      duedate: new Date().toISOString().split('T')[0],
     });
     navigation.goBack();
-
-
   };
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView>
@@ -146,40 +127,24 @@ const AddTodo = ({ navigation, route }) => {
             {['high', 'medium', 'low'].map((level) => (
               <TouchableOpacity
                 key={level}
-                style={[
-                  styles.priorityOption,
-                  getPriorityButtonStyle(level)
-                ]}
+                style={[styles.priorityOption, getPriorityButtonStyle(level)]}
                 onPress={() => setTask({ ...task, priority: level })}
               >
-                <Text style={[
-                  styles.priorityOptionText,
-                  getPriorityTextStyle(level)
-                ]}>
+                <Text style={[styles.priorityOptionText, getPriorityTextStyle(level)]}>
                   {level.toUpperCase()}
                 </Text>
               </TouchableOpacity>
             ))}
           </View>
           <Text style={styles.label}>Due Date</Text>
-
-          <TouchableOpacity
-            style={styles.dateInput}
-            onPress={toggleCalendar}
-          >
-            <Text style={task.date ? styles.dateText : styles.placeholderText}>
-              {formatDisplayDate(task.date)}
-              {/* {task.date} */}
+          <TouchableOpacity style={styles.dateInput} onPress={toggleCalendar}>
+            <Text style={task.duedate ? styles.dateText : styles.placeholderText}>
+              {formatDisplayDate(task.duedate)}
             </Text>
             <MaterialIcons name="calendar-today" size={20} color="#6200ee" />
           </TouchableOpacity>
         </View>
-        <Modal
-          visible={showCalendar}
-          animationType="slide"
-          transparent={true}
-        >
-
+        <Modal visible={showCalendar} animationType="slide" transparent={true}>
           <View style={styles.calendarModal}>
             <View style={styles.calendarContainer}>
               <Calendar
@@ -195,18 +160,16 @@ const AddTodo = ({ navigation, route }) => {
                   arrowColor: '#6200ee',
                 }}
               />
-
               <View style={styles.calendarButtons}>
                 <TouchableOpacity
                   style={[styles.calendarButton, styles.cancelButton]}
                   onPress={() => {
-                    setTempSelectedDate(task.date); // Revert to original date
+                    setTempSelectedDate(task.duedate);
                     setShowCalendar(false);
                   }}
                 >
                   <Text style={[styles.calendarButtonText, { color: "black" }]}>Cancel</Text>
                 </TouchableOpacity>
-
                 <TouchableOpacity
                   style={[styles.calendarButton, styles.confirmButton]}
                   onPress={handleConfirmDate}
@@ -218,9 +181,7 @@ const AddTodo = ({ navigation, route }) => {
           </View>
         </Modal>
         <View style={styles.formActions}>
-
           <Button
-            borderRadius={12}
             title="Cancel"
             color="#ff6b6b"
             onPress={() => navigation.goBack()}
@@ -232,10 +193,10 @@ const AddTodo = ({ navigation, route }) => {
         </View>
       </ScrollView>
     </SafeAreaView>
-  )
-}
+  );
+};
 
-export default AddTodo
+export default AddTodo;
 
 const styles = StyleSheet.create({
   container: {
@@ -268,7 +229,6 @@ const styles = StyleSheet.create({
     borderColor: '#ddd',
     marginBottom: 16,
   },
-
   multilineInput: {
     minHeight: 80,
   },
@@ -348,6 +308,6 @@ const styles = StyleSheet.create({
   },
   calendarButtonText: {
     fontWeight: 'bold',
-    color: "#fff"
+    color: "#fff",
   },
-})
+});

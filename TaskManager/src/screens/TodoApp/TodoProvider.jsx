@@ -1,52 +1,19 @@
-import React, { createContext, useContext, useEffect, useState } from 'react'
+import React, { createContext, useContext, useEffect, useState } from 'react';
 import { auth, firestore } from '../../../firebase/firebaseConfig';
 import { addDoc, collection, deleteDoc, doc, onSnapshot, query, updateDoc, where } from '@react-native-firebase/firestore';
 import { Alert } from 'react-native';
 
-
 const TodoContext = createContext();
-const data = [{
-    id: 1,
-    title: 'faizan khan',
-    description: 'gudgfiustfiuefiue',
-    priority: 'medium',
-    date: new Date().toISOString().split('T')[0],
-    opened: false
-},
-{
-    id: 2,
-    title: 'Amaan khan',
-    description: `gudgfiustfiuefiue
-    gudgfiustfiuefiue
-    gudgfiustfiuefiue
-    gudgfiustfiuefiue
-    gudgfiustfiuefiue`,
-    priority: 'low',
-    date: new Date().toISOString().split('T')[0],
-    opened: false
-
-},
-{
-    id: 3,
-    title: 'Talha khan',
-    description: 'gudgfiustfiuefiue',
-    priority: 'high',
-    date: new Date().toISOString().split('T')[0],
-    opened: false
-},
-
-]
 
 export const TodoProvider = ({ children }) => {
-    const [task, setTask] = useState([])
-    const [loading, setLoding] = useState(false)
+    const [task, setTask] = useState([]);
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        if (auth.currentUser) {
-
+        if (auth.currentUser ) {
             const q = query(
                 collection(firestore, 'todos'),
-                where('userId', '==', auth.currentUser.uid)
+                where('userId', '==', auth.currentUser .uid)
             );
 
             const unsubscribe = onSnapshot(q, (querySnapshot) => {
@@ -56,94 +23,66 @@ export const TodoProvider = ({ children }) => {
                 });
                 setTask(items);
             });
-            console.log("unsubscribe: ", unsubscribe)
 
             return () => unsubscribe();
         }
     }, []);
 
     const addTask = async (tasks) => {
-        console.log(tasks)
-        // setLoding(true)
-        if (auth.currentUser) {
+        if (auth.currentUser ) {
             try {
                 await addDoc(collection(firestore, 'todos'), {
-
                     title: tasks.title.trim(),
                     createdAt: new Date(),
                     description: tasks.description,
-                    duedate: tasks.date,
+                    duedate: tasks.duedate,
                     isDone: false,
                     priority: tasks.priority,
-                    userId: auth.currentUser.uid,
+                    userId: auth.currentUser .uid,
                 });
-                // setLoding(false)
-                // setTask([...task, tasks])
-
-
             } catch (error) {
-                // setLoding(false)
-
                 console.log('Error adding todo: ', error);
             }
-            finally {
-                // setLoding(false)
-            }
         }
     };
 
-
-    const updateTask = async (id, updateditem) => {
-        setLoding(true);
+    const updateTask = async (id, updatedItem) => {
+        setLoading(true);
         try {
             await updateDoc(doc(firestore, 'todos', id), {
-                description: updateditem.description,
-                duedate: updateditem.duedate,
-                isDone: updateditem.isDone,
-                priority: updateditem.priority,
-                title: updateditem.title
+                description: updatedItem.description,
+                duedate: updatedItem.duedate,
+                isDone: updatedItem.isDone,
+                priority: updatedItem.priority,
+                title: updatedItem.title
             });
-            setTask(task.map(task => task.id === id ? updateditem : task));
-            setLoding(false)
+            setTask(task.map(t => t.id === id ? updatedItem : t));
+        } catch (error) {
+            console.log("Error:", error);
+        } finally {
+            setLoading(false);
         }
-        catch (error) {
-            setLoding(false)
-            console.log("Error:", error)
-        }
-        finally {
-            setLoding(false)
-        }
-    }
+    };
 
     const deleteTask = async (item) => {
-        // setLoding(true)
         try {
             await deleteDoc(doc(firestore, 'todos', item.id));
-            // Alert.alert("Delete Successfully.")
-            // setLoding(false)
-
-        }
-        catch (error) {
-            // setLoding(false)
-            console.log("Error:", error)
-        }
-        finally{
-            // setLoding(false)
+        } catch (error) {
+            console.log("Error:", error);
         }
     };
 
-    const searchTasks = (query) => {
-        task.filter(task =>
-            task.title.toLowerCase().includes(query.toLowerCase()) ||
-            task.description.toLowerCase().includes(query.toLowerCase()) ||
-            task.priority.toLocaleLowerCase().includes(query.toLocaleLowerCase())
-        )
-    };
+    const searchTasks = (query) => task.filter(t => (
+        t.title.toLowerCase().includes(query.toLowerCase()) ||
+        t.description.toLowerCase().includes(query.toLowerCase()) ||
+        t.priority.toLowerCase().includes(query.toLowerCase())
+    ));
+
     return (
         <TodoContext.Provider value={{ task, updateTask, addTask, deleteTask, searchTasks }}>
-            { children}
+            {children}
         </TodoContext.Provider>
-    )
-}
+    );
+};
 
-export const useTodo = () => useContext(TodoContext)
+export const useTodo = () => useContext(TodoContext);

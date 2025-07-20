@@ -1,49 +1,43 @@
-import { Alert, Button, StyleSheet, Text, View } from 'react-native'
-import React, { useEffect } from 'react'
-import { useAuth } from './AuthContext'
-import { useNavigation } from '@react-navigation/native'
-import Logo from '../../../../src/components/Logo'
-import { s, vs } from 'react-native-size-matters'
-import ProcessingCircle from '../../../../src/components/ProcessingCircle'
-import RightArrow from '../../../../src/components/RightArrow'
-import Circle from '../../../../src/components/Circle'
+import React, { useEffect } from 'react';
+import { Alert, StyleSheet, Text, View } from 'react-native';
+import { useAuth } from './AuthContext';
+import { s, vs } from 'react-native-size-matters';
+import Logo from '../../components/Logo';
+import Circle from '../../components/Circle';
+import ArrowIcon from '../../components/ArrowIcon';
 
-const Splash = ({navigation}) => {
+const Splash = ({ navigation }) => {
+    const { user } = useAuth();
 
-    const { user } = useAuth()
-
-    // const navigation = useNavigation();
     useEffect(() => {
+        console.log("Splash Screen Mount");
 
         const timer = setTimeout(() => {
-            navigation.navigate("AppNavigator")
-
+            navigation.replace("AppNavigator");
         }, 3000);
 
-        return ()=> clearTimeout(timer);
+        return () => {
+            console.log("Splash Screen Unmount");
+            clearTimeout(timer);
+        };
+    }, [navigation]);
 
-    }, [])
     return (
         <View style={styles.container}>
             <Logo />
             <View style={{ marginTop: 70 }}>
                 <Text style={styles.heading}>Get things done.</Text>
-                <Text style={styles.subtitle}>{`just a click away from \nplanning your task`}</Text>
+                <Text style={styles.subtitle}>
+                    {`just a click away from \nplanning your task`}
+                </Text>
             </View>
-            <View style={styles.ProcessingBar}>
-                <ProcessingCircle color={"gray"} />
-                <ProcessingCircle color={"gray"} />
-                <ProcessingCircle color={"#686bf0"} />
-            </View>
-            <Circle sendData={() => navigation.navigate("AppNavigator")} />
-            <RightArrow sendData={() => navigation.navigate("AppNavigator")} />
-
-
+            <Circle onPress={() => navigation.navigate("AppNavigator")} />
+            <ArrowIcon onPress={() => navigation.navigate("AppNavigator")} />
         </View>
-    )
-}
+    );
+};
 
-export default Splash
+export default Splash;
 
 const styles = StyleSheet.create({
     container: {
@@ -54,8 +48,7 @@ const styles = StyleSheet.create({
     heading: {
         fontSize: s(24),
         fontWeight: '800',
-        fontStyle: "normal",
-        paddingStart: 40
+        paddingStart: 40,
     },
     subtitle: {
         marginTop: vs(15),
@@ -63,14 +56,6 @@ const styles = StyleSheet.create({
         color: "gray",
         fontWeight: "400",
         letterSpacing: 1.5,
-        paddingStart: 40
-
+        paddingStart: 40,
     },
-    ProcessingBar: {
-        flexDirection: "row",
-        gap: s(15),
-        marginStart: s(40),
-        marginTop: vs(15)
-
-    }
-})
+});

@@ -3,9 +3,7 @@ import React from 'react'
 import { s, vs } from 'react-native-size-matters'
 import Loader from './Loader'
 
-const Button = ({ title,onPress, loading }) => {
-
-
+const Button = ({ title, onPress, loading }) => {
     return (
         <TouchableOpacity style={[styles.button]} onPress={onPress}>
             {
@@ -29,9 +27,8 @@ const styles = StyleSheet.create({
         alignSelf: "center",
         paddingHorizontal: s(40),
         paddingVertical: vs(10),
-        // width:s(230),
-        height:vs(50),
-        elevation:15,
+        height: vs(50),
+        elevation: 15,
         marginTop: vs(10),
     },
     buttontext: {

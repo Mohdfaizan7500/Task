@@ -16,8 +16,6 @@ const styles = StyleSheet.create({
         alignSelf: "center",
         color: 'gray',
         fontSize: s(14),
-        // position:"absolute",
-        // bottom:vs(150),
         marginTop:vs(10)
     },
 })

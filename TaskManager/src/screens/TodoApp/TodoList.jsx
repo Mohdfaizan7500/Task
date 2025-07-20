@@ -1,52 +1,38 @@
-import { Alert, FlatList, Keyboard, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, FlatList, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import Header from '../../components/Header';
 import PlusButton from '../../components/PlusButton';
-// import Checkbox from '../../../../scr2/components/CheckBox';
 import { useTodo } from './TodoProvider';
-// import PriorityBadge from '../../../../scr2/components/PriorityBadge';
 import { GestureHandlerRootView, Swipeable } from 'react-native-gesture-handler';
 import EditIcon from 'react-native-vector-icons/Feather';
 import DeleteIcon from 'react-native-vector-icons/MaterialIcons';
 import TodoModal from '../../components/TodoModal';
-import { Modal } from 'react-native';
-import { ActivityIndicator } from 'react-native';
-// import { ColorPatel } from '../../../../src/assets/ColorPatel';
-import { useAuth } from '../Auth/AuthContext';
+import { Modal, ActivityIndicator } from 'react-native';
 import Checkbox from '../../components/CheckBox';
 import PriorityBadge from '../../components/PriorityBadge';
 import { ColorPatel } from '../../assets/ColorPatel';
 
-
 const TodoList = ({ navigation }) => {
-  const { task, updateTask, deleteTask, searchTasks, } = useTodo();
-
+  const { task, updateTask, deleteTask, searchTasks } = useTodo();
   const swipeableRow = useRef(null);
   const [currentlyActiveRow, setCurrentlyActiveRow] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
-  const [visible, setVisible] = useState(false)
-  const [ModalData, setModalData] = useState('')
-  const [loader, setLoader] = useState(false)
+  const [visible, setVisible] = useState(false);
+  const [modalData, setModalData] = useState('');
+  const [loader, setLoader] = useState(false);
+  
   const filteredTasks = searchQuery ? searchTasks(searchQuery) : task;
 
-
-
-
-  const toggleTaskmodal = (item) => {
-    setModalData(item)
-    setVisible(!visible)
-
-  }
+  const toggleTaskModal = (item) => {
+    setModalData(item);
+    setVisible(!visible);
+  };
 
   const toggleComplete = (task) => {
-    setLoader(true)
-    updateTask(task.id, {
-      ...task,
-      isDone: !task.isDone,
-    });
-    setLoader(false)
-
+    setLoader(true);
+    updateTask(task.id, { ...task, isDone: !task.isDone });
+    setLoader(false);
   };
 
   const closeRow = useCallback(() => {
@@ -57,33 +43,29 @@ const TodoList = ({ navigation }) => {
   }, [currentlyActiveRow]);
 
   const confirmDelete = (item) => {
-    Alert.alert(
-      "Delete Task",
-      "Are you sure you want to delete this task?",
-      [
-        { text: "Cancel", style: "cancel" },
-        { text: "Delete", onPress: () => deleteTask(item) },
-      ]
-    );
+    Alert.alert("Delete Task", "Are you sure you want to delete this task?", [
+      { text: "Cancel", style: "cancel" },
+      { text: "Delete", onPress: () => deleteTask(item) },
+    ]);
     closeRow();
   };
 
-  const leftSwift = (item) => (
+  const leftSwipe = (item) => (
     <TouchableOpacity
       onPress={() => {
         closeRow();
         navigation.navigate('AddTodo', { task: item });
       }}
-      style={styles.leftSwift}
+      style={styles.leftSwipe}
     >
       <EditIcon name="edit" size={24} color="#fff" />
     </TouchableOpacity>
   );
 
-  const rightSwift = (item) => (
+  const rightSwipe = (item) => (
     <TouchableOpacity
       onPress={() => confirmDelete(item)}
-      style={[styles.leftSwift, styles.rightSwift]}
+      style={[styles.leftSwipe, styles.rightSwipe]}
     >
       <DeleteIcon name="delete" size={30} color="#fff" />
     </TouchableOpacity>
@@ -95,8 +77,8 @@ const TodoList = ({ navigation }) => {
       friction={2}
       leftThreshold={30}
       rightThreshold={40}
-      renderLeftActions={() => leftSwift(item)}
-      renderRightActions={() => rightSwift(item)}
+      renderLeftActions={() => leftSwipe(item)}
+      renderRightActions={() => rightSwipe(item)}
       onSwipeableWillOpen={() => {
         closeRow();
         setCurrentlyActiveRow(swipeableRow.current);
@@ -107,15 +89,10 @@ const TodoList = ({ navigation }) => {
         }
       }}
     >
-      <TouchableOpacity
-        activeOpacity={0.8}
-        onLongPress={() => toggleTaskmodal(item)}>
+      <TouchableOpacity activeOpacity={0.8} onLongPress={() => toggleTaskModal(item)}>
         <View style={[styles.taskCard, item.isDone && styles.completedTask]}>
           <View style={styles.taskRow}>
-            <Checkbox
-              checked={item.isDone}
-              onPress={() => toggleComplete(item)}
-            />
+            <Checkbox checked={item.isDone} onPress={() => toggleComplete(item)} />
             <View style={styles.taskContent}>
               <View style={styles.taskHeader}>
                 <Text style={[styles.taskTitle, item.isDone && styles.completedText]}>
@@ -127,10 +104,10 @@ const TodoList = ({ navigation }) => {
               <Text
                 numberOfLines={1}
                 ellipsizeMode='tail'
-                style={[styles.taskDescription, item.isDone && styles.completedText]}>
+                style={[styles.taskDescription, item.isDone && styles.completedText]}
+              >
                 {item.description}
               </Text>
-
             </View>
           </View>
         </View>
@@ -142,9 +119,18 @@ const TodoList = ({ navigation }) => {
     setSearchQuery(txt);
   };
 
+  useEffect(()=>{
+    console.log("List Screen Mount")
+
+    return ()=> {
+    console.log("List Screen UnMount")
+
+    }
+  },[])
+
   return (
     <SafeAreaView style={styles.container}>
-      <Header headerSearch={headerSearch}/>
+      <Header headerSearch={headerSearch} />
       <View style={{ backgroundColor: "#f5f5f5", flex: 1, padding: 16 }}>
         <GestureHandlerRootView>
           <FlatList
@@ -157,22 +143,13 @@ const TodoList = ({ navigation }) => {
           />
         </GestureHandlerRootView>
       </View>
-      {
-        !isKeyboardVisible &&
-        <PlusButton onPress={() => navigation.navigate("AddTodo")} />
-      }
-      <TodoModal visible={visible} onPress={toggleTaskmodal} item={ModalData} />
-      <Modal
-        transparent
-        visible={loader}
-      >
+      {!isKeyboardVisible && <PlusButton onPress={() => navigation.navigate("AddTodo")} />}
+      <TodoModal visible={visible} onPress={toggleTaskModal} item={modalData} />
+      <Modal transparent visible={loader}>
         <View style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "rgba(0, 0, 0, 0.25)" }}>
           <ActivityIndicator color={ColorPatel.AppColor} size={70} />
-
-
         </View>
       </Modal>
-
     </SafeAreaView>
   );
 };
@@ -233,7 +210,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
     color: '#888',
   },
-  leftSwift: {
+  leftSwipe: {
     backgroundColor: "#3498db",
     width: 70,
     justifyContent: "center",
@@ -242,7 +219,7 @@ const styles = StyleSheet.create({
     borderTopStartRadius: 8,
     borderBottomStartRadius: 8,
   },
-  rightSwift: {
+  rightSwipe: {
     backgroundColor: "#e74c3c",
     borderTopStartRadius: 0,
     borderBottomStartRadius: 0,
