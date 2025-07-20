@@ -1,4 +1,6 @@
 import React, { createContext, useContext, useState } from 'react'
+import { auth, firestore } from '../../../firebase/firebaseConfig';
+import { addDoc, collection } from '@react-native-firebase/firestore';
 
 
 const TodoContext = createContext();
@@ -38,25 +40,24 @@ export const TodoProvider = ({ children }) => {
     const [task, setTask] = useState([...data])
 
     const addTask = async (tasks) => {
+        if (auth.currentUser) {
+            try {
+                await addDoc(collection(firestore, 'todos'), {
+                    title: tasks.title.trim(),
+                    createdAt: new Date(),
+                    description: tasks.description,
+                    duedate: tasks.duedate,
+                    isDne: false,
+                    priority: tasks.priority,
+                    userId: auth.currentUser.uid,
+                });
 
-        // try {
-        //     await addDoc(collection(firestore, 'todos'), {
-
-
-        //         title: task.title.trim(),
-        //         date: new Date(),
-        //         description: task.description,
-        //         duedate: task.duedate,
-        //         isDne: false,
-        //         priority: task.priority,
-        //         userId: auth.currentUser.uid,
-        //     });
-
-        // } catch (error) {
-        //     console.log('Error adding todo: ', error);
-        // }
-        setTask([...task, tasks])
-        Alert.alert('Inform', 'Add successfully.')
+            } catch (error) {
+                console.log('Error adding todo: ', error);
+            }
+            setTask([...task, tasks])
+            Alert.alert('Inform', 'Add successfully.')
+        }
     };
 
     const updateTask = (id, updatedTask) => {
@@ -69,11 +70,11 @@ export const TodoProvider = ({ children }) => {
         task.filter(task =>
             task.title.toLowerCase().includes(query.toLowerCase()) ||
             task.description.toLowerCase().includes(query.toLowerCase()) ||
-            task.priority.toLocaleLowerCase().includes(query.toLocaleLowerCase())||
+            task.priority.toLocaleLowerCase().includes(query.toLocaleLowerCase()) ||
             task.date.includes(query)
         );
     return (
-        <TodoContext.Provider value={{ task, updateTask, addTask, deleteTask,searchTasks }}>
+        <TodoContext.Provider value={{ task, updateTask, addTask, deleteTask, searchTasks }}>
             {children}
         </TodoContext.Provider>
     )

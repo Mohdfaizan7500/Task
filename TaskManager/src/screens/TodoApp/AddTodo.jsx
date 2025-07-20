@@ -20,7 +20,7 @@ const AddTodo = ({ navigation, route }) => {
       title: '',
       description: '',
       priority: 'medium',
-      date: new Date().toISOString().split('T')[0],
+      duedate: new Date().toISOString().split('T')[0],
     }
   );
 
