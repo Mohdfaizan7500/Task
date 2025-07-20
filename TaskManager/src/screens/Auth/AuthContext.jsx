@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from 'react'
-import { onAuthStateChanged } from '@react-native-firebase/auth';
+import { onAuthStateChanged, signOut } from '@react-native-firebase/auth';
 import { auth } from '../../../firebase/firebaseConfig';
 
 const AuthContext = createContext();
@@ -15,6 +15,8 @@ export const AuthProvider = ({ children }) => {
         })
         return unsubscribe;
     }, [])
+
+    
 
     return (
         <AuthContext.Provider value={{ user, loading }}>

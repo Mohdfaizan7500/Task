@@ -1,5 +1,5 @@
 import { Alert, Button, Modal, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { Calendar } from 'react-native-calendars';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { useTodo } from './TodoProvider';
@@ -20,17 +20,33 @@ const AddTodo = ({ navigation, route }) => {
       title: '',
       description: '',
       priority: 'medium',
-      duedate: new Date().toISOString().split('T')[0],
+      date: new Date().toISOString().split('T')[0],
     }
   );
+
+  useEffect(() => {
+    console.log("Add comount mount")
+    console.log(task)
+
+    return () => {
+      console.log("Add comount unmount")
+
+    }
+
+  }, [])
+
+  useEffect(()=>{
+    console.log("updated task:",task)
+
+  },[task.date])
 
   // Format date for display (e.g., "Oct 15, 2023")
   const formatDisplayDate = (dateString) => {
     if (!dateString) return 'Select Date';
     const date = new Date(dateString);
     return date.toLocaleDateString('en-US', {
-      month: 'short',
       day: 'numeric',
+      month: 'short',
       year: 'numeric'
     });
   };
@@ -41,9 +57,11 @@ const AddTodo = ({ navigation, route }) => {
 
   const onDayPress = (day) => {
     setTempSelectedDate(day.dateString);
+    console.log(day.dateString.split('-').reverse().join('/'))
   };
   const handleConfirmDate = () => {
-    setTask({ ...task, date: tempSelectedDate });
+    setTask({ ...task, date: tempSelectedDate});
+    // console.log(task)
     setShowCalendar(false);
   };
 
@@ -94,7 +112,8 @@ const AddTodo = ({ navigation, route }) => {
       title: '',
       description: '',
       priority: 'medium',
-      date: new Date().toISOString().split('T')[0],
+      // date:tempSelectedDate,
+      date: new Date().toISOString().split('T')[0].split('-').reverse().join('/')
     });
     navigation.goBack();
 
@@ -150,6 +169,7 @@ const AddTodo = ({ navigation, route }) => {
           >
             <Text style={task.date ? styles.dateText : styles.placeholderText}>
               {formatDisplayDate(task.date)}
+              {/* {task.date} */}
             </Text>
             <MaterialIcons name="calendar-today" size={20} color="#6200ee" />
           </TouchableOpacity>

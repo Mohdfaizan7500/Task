@@ -7,12 +7,12 @@ import LineIcon from 'react-native-vector-icons/Feather';
 import SearchIcon from 'react-native-vector-icons/FontAwesome';
 import { TextInput } from 'react-native';
 import { TaskContext } from '../TaskProvider';
-import { getAuth, signOut } from '@react-native-firebase/auth';
+import {  signOut } from '@react-native-firebase/auth';
 import { useNavigation } from '@react-navigation/native';
-const Header = ({ headerSearch }) => {
+import { auth } from '../../TaskManager/firebase/firebaseConfig';
+const Header = ({ headerSearch ,onPress}) => {
     const { tasks, searchTasks, } = useContext(TaskContext);
 
-    const navigation = useNavigation();
 
     const [SearchTodo, setSearchTodo] = useState('')
     const [searchQuery, setSearchQuery] = useState('');
@@ -31,15 +31,13 @@ const Header = ({ headerSearch }) => {
         headerSearch(txt)
     }
 
-    const LogoutHandle = async () => {
-        try {
-            const auth = getAuth(); // Use existing auth instance if available
-            await signOut(auth); // Sign out the user
-            // Consider adding any additional cleanup here if needed
-            navigation.navigate('Login'); // Or perhaps 'Login' instead of 'Signup'?
-        } catch (error) {
-        }
-    }
+    // const LogoutHandle = async () => {
+    //     // try {
+    //     //    await signOut(auth)
+    //     // } catch (error) {
+    //     //     console.log("Error:",error)
+    //     // }
+    // }
     return (
         <View style={styles.ViewBG}>
             <View style={styles.Container}>
@@ -57,14 +55,16 @@ const Header = ({ headerSearch }) => {
                         onChangeText={(txt) => [sendData(txt), setSearchQuery(txt)]}
                     />
                 </View>
-                <TouchableOpacity style={styles.LineContainer} onPress={() => {
-                    Alert.alert("Log out", "Are you sure, Want to logout",
-                        [
-                            { text: 'Cancel', style: "cancel" },
-                            { text: "Logout", onPress: () => LogoutHandle() }
-                        ]
-                    )
-                }}>
+                <TouchableOpacity style={styles.LineContainer} onPress={onPress
+                //     () => {
+                //     Alert.alert("Log out", "Are you sure, Want to logout",
+                //         [
+                //             { text: 'Cancel', style: "cancel" },
+                //             { text: "Logout", onPress: () => LogoutHandle() }
+                //         ]
+                //     )
+                // }
+                }>
                     <LineIcon name="more-horizontal" size={25} color={ColorPatel.Bacground} />
                 </TouchableOpacity>
 

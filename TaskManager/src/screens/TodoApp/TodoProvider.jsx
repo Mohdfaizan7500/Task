@@ -63,7 +63,8 @@ export const TodoProvider = ({ children }) => {
     }, []);
 
     const addTask = async (tasks) => {
-        setLoding(true)
+        console.log(tasks)
+        // setLoding(true)
         if (auth.currentUser) {
             try {
                 await addDoc(collection(firestore, 'todos'), {
@@ -71,22 +72,22 @@ export const TodoProvider = ({ children }) => {
                     title: tasks.title.trim(),
                     createdAt: new Date(),
                     description: tasks.description,
-                    duedate: tasks.duedate,
+                    duedate: tasks.date,
                     isDone: false,
                     priority: tasks.priority,
                     userId: auth.currentUser.uid,
                 });
-                setLoding(false)
-                setTask([...task, tasks])
+                // setLoding(false)
+                // setTask([...task, tasks])
 
 
             } catch (error) {
-                setLoding(false)
+                // setLoding(false)
 
                 console.log('Error adding todo: ', error);
             }
             finally {
-                setLoding(false)
+                // setLoding(false)
             }
         }
     };
@@ -115,19 +116,19 @@ export const TodoProvider = ({ children }) => {
     }
 
     const deleteTask = async (item) => {
-        setLoding(true)
+        // setLoding(true)
         try {
             await deleteDoc(doc(firestore, 'todos', item.id));
             // Alert.alert("Delete Successfully.")
-            setLoding(false)
+            // setLoding(false)
 
         }
         catch (error) {
-            setLoding(false)
+            // setLoding(false)
             console.log("Error:", error)
         }
         finally{
-            setLoding(false)
+            // setLoding(false)
         }
     };
 
@@ -140,7 +141,7 @@ export const TodoProvider = ({ children }) => {
     };
     return (
         <TodoContext.Provider value={{ task, updateTask, addTask, deleteTask, searchTasks }}>
-            {!loading && children}
+            { children}
         </TodoContext.Provider>
     )
 }

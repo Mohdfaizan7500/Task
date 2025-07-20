@@ -14,7 +14,6 @@ const Header = ({ navigation, headerSearch }) => {
     const logout = async () => {
         try {
             await signOut(auth);
-            navigation.navigate("Login");
         } catch (error) {
             console.log("Error:", error);
             Alert.alert("Error");

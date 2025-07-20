@@ -12,10 +12,12 @@ import TodoModal from '../../components/TodoModal';
 import { Modal } from 'react-native';
 import { ActivityIndicator } from 'react-native';
 import { ColorPatel } from '../../../../src/assets/ColorPatel';
+import { useAuth } from '../Auth/AuthContext';
 
 
 const TodoList = ({ navigation }) => {
   const { task, updateTask, deleteTask, searchTasks, } = useTodo();
+
   const swipeableRow = useRef(null);
   const [currentlyActiveRow, setCurrentlyActiveRow] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
@@ -118,7 +120,7 @@ const TodoList = ({ navigation }) => {
                 </Text>
                 <PriorityBadge priority={item.priority} />
               </View>
-              <Text style={styles.taskDate}>Due: {item.date}</Text>
+              <Text style={styles.taskDate}>Due: {item.duedate}</Text>
               <Text
                 numberOfLines={1}
                 ellipsizeMode='tail'
@@ -139,7 +141,7 @@ const TodoList = ({ navigation }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Header headerSearch={headerSearch} />
+      <Header headerSearch={headerSearch}/>
       <View style={{ backgroundColor: "#f5f5f5", flex: 1, padding: 16 }}>
         <GestureHandlerRootView>
           <FlatList

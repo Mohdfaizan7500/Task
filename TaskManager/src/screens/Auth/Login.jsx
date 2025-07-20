@@ -1,4 +1,4 @@
-import { Alert, Pressable, SafeAreaView, StyleSheet, Text, TextInput, View } from 'react-native'
+import { Alert, Keyboard, Pressable, SafeAreaView, StyleSheet, Text, TextInput, View } from 'react-native'
 import React, { useState } from 'react'
 import Logo from '../../../../src/components/Logo'
 import Heading from '../../../../src/components/Heading'
@@ -40,6 +40,7 @@ const Login = ({ navigation }) => {
   }
 
   const handleLogin = async () => {
+    Keyboard.dismiss()
     if (!validateForm()) return;
     try {
       setLoading(true)
