@@ -1,7 +1,8 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { auth, firestore } from '../../../firebase/firebaseConfig';
+// import { auth, firestore } from '../../../firebase/firebaseConfig';
 import { addDoc, collection, deleteDoc, doc, onSnapshot, query, updateDoc, where } from '@react-native-firebase/firestore';
 import { Alert } from 'react-native';
+import { auth, firestore } from '../firbaseConfig/firebaseConfig';
 
 const TodoContext = createContext();
 
@@ -10,10 +11,10 @@ export const TodoProvider = ({ children }) => {
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        if (auth.currentUser) {
+        if (auth.currentUser ) {
             const q = query(
                 collection(firestore, 'todos'),
-                where('userId', '==', auth.currentUser.uid)
+                where('userId', '==', auth.currentUser .uid)
             );
 
             const unsubscribe = onSnapshot(q, (querySnapshot) => {
@@ -22,7 +23,6 @@ export const TodoProvider = ({ children }) => {
                     items.push({ id: doc.id, ...doc.data() });
                 });
                 setTask(items);
-                console.log(items)
             });
 
             return () => unsubscribe();
@@ -30,7 +30,7 @@ export const TodoProvider = ({ children }) => {
     }, []);
 
     const addTask = async (tasks) => {
-        if (auth.currentUser) {
+        if (auth.currentUser ) {
             try {
                 await addDoc(collection(firestore, 'todos'), {
                     title: tasks.title.trim(),
@@ -39,7 +39,8 @@ export const TodoProvider = ({ children }) => {
                     duedate: tasks.duedate,
                     isDone: false,
                     priority: tasks.priority,
-                    userId: auth.currentUser.uid,
+                    userId: auth.currentUser .uid,
+                    opened:false,
                 });
             } catch (error) {
                 console.log('Error adding todo: ', error);
@@ -79,28 +80,8 @@ export const TodoProvider = ({ children }) => {
         t.priority.toLowerCase().includes(query.toLowerCase())
     ));
 
-    const ComponentOpen = (id) => {
-        console.log('id on TodoProvider:',id )
-
-        
-        // let tempData = task;
-        // tempData.map((item, index) => {
-        //     if (index == ind) {
-        //         item.opened = true;
-        //     }
-        //     else {
-        //         item.opened = false;
-        //     }
-
-        // })
-        // let temp = [];
-        // tempData.map(item => {
-        //     temp.push(item)
-        // })
-        // setTask(temp)
-    }
     return (
-        <TodoContext.Provider value={{ task, updateTask, addTask, deleteTask, searchTasks, ComponentOpen }}>
+        <TodoContext.Provider value={{ task, updateTask, addTask, deleteTask, searchTasks }}>
             {children}
         </TodoContext.Provider>
     );

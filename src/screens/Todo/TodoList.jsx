@@ -1,27 +1,27 @@
 import { Alert, FlatList, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import React, { useRef, useState } from 'react';
+import React, { useCallback, useEffect,  useRef,  useState } from 'react';
 import Header from '../../components/Header';
 import PlusButton from '../../components/PlusButton';
-import { useTodo } from './TodoProvider';
 import { GestureHandlerRootView, Swipeable } from 'react-native-gesture-handler';
 import EditIcon from 'react-native-vector-icons/Feather';
 import DeleteIcon from 'react-native-vector-icons/MaterialIcons';
 import TodoModal from '../../components/TodoModal';
 import { Modal, ActivityIndicator } from 'react-native';
-import Checkbox from '../../components/CheckBox';
 import PriorityBadge from '../../components/PriorityBadge';
-import { ColorPatel } from '../../assets/ColorPatel';
+import { useTodo } from '../../context/TodoProvider';
+import { ColorPatel } from '../../constants/ColorPatel copy';
+import Checkbox from '../../components/CheckBox';
 
 const TodoList = ({ navigation }) => {
   const { task, updateTask, deleteTask, searchTasks } = useTodo();
-  const [openRowId, setOpenRowId] = useState(null);
+  const swipeableRow = useRef(null);
+  const [currentlyActiveRow, setCurrentlyActiveRow] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
   const [visible, setVisible] = useState(false);
   const [modalData, setModalData] = useState('');
   const [loader, setLoader] = useState(false);
-  const swipeableRefs = useRef({}).current;
-
+  
   const filteredTasks = searchQuery ? searchTasks(searchQuery) : task;
 
   const toggleTaskModal = (item) => {
@@ -35,33 +35,26 @@ const TodoList = ({ navigation }) => {
     setLoader(false);
   };
 
+  const closeRow = useCallback(() => {
+    console.log("Close row called")
+    if (currentlyActiveRow) {
+      currentlyActiveRow.close();
+      setCurrentlyActiveRow(null);
+    }
+  }, [currentlyActiveRow]);
+
   const confirmDelete = (item) => {
     Alert.alert("Delete Task", "Are you sure you want to delete this task?", [
       { text: "Cancel", style: "cancel" },
       { text: "Delete", onPress: () => deleteTask(item) },
     ]);
-  };
-
-  const handleRowOpen = (rowId) => {
-    // Close any previously opened row
-    if (openRowId && openRowId !== rowId && swipeableRefs[openRowId]) {
-      swipeableRefs[openRowId].close();
-    }
-    setOpenRowId(rowId);
-  };
-
-  const handleRowClose = (rowId) => {
-    if (openRowId === rowId) {
-      setOpenRowId(null);
-    }
+    closeRow();
   };
 
   const leftSwipe = (item) => (
     <TouchableOpacity
       onPress={() => {
-        if (swipeableRefs[item.id]) {
-          swipeableRefs[item.id].close();
-        }
+        closeRow();
         navigation.navigate('AddTodo', { task: item });
       }}
       style={styles.leftSwipe}
@@ -72,73 +65,69 @@ const TodoList = ({ navigation }) => {
 
   const rightSwipe = (item) => (
     <TouchableOpacity
-      onPress={() => {
-        if (swipeableRefs[item.id]) {
-          swipeableRefs[item.id].close();
-        }
-        confirmDelete(item);
-      }}
+      onPress={() => confirmDelete(item)}
       style={[styles.leftSwipe, styles.rightSwipe]}
     >
       <DeleteIcon name="delete" size={30} color="#fff" />
     </TouchableOpacity>
   );
 
-  const RenderItem = ({ item }) => {
-    return (
-      <Swipeable
-        ref={(ref) => { swipeableRefs[item.id] = ref }}
-        friction={2}
-        leftThreshold={40}
-        rightThreshold={40}
-        renderLeftActions={() => leftSwipe(item)}
-        renderRightActions={() => rightSwipe(item)}
-        onSwipeableOpen={() => handleRowOpen(item.id)}
-        onSwipeableClose={() => handleRowClose(item.id)}
-        overshootFriction={8}
-      >
-        <TouchableOpacity
-          activeOpacity={0.8}
-          onLongPress={() => toggleTaskModal(item)}
-          onPress={() => {
-            // Close row when tapping on it if it's open
-            if (openRowId === item.id && swipeableRefs[item.id]) {
-              swipeableRefs[item.id].close();
-            } else {
-              toggleComplete(item);
-            }
-          }}
-          delayPressIn={100} // Helps distinguish between tap and long press
-        >
-          <View style={[styles.taskCard, item.isDone && styles.completedTask]}>
-            <View style={styles.taskRow}>
-              <Checkbox checked={item.isDone} onPress={() => toggleComplete(item)} />
-              <View style={styles.taskContent}>
-                <View style={styles.taskHeader}>
-                  <Text style={[styles.taskTitle, item.isDone && styles.completedText]}>
-                    {item.title}
-                  </Text>
-                  <PriorityBadge priority={item.priority} />
-                </View>
-                <Text style={styles.taskDate}>Due: {item.duedate}</Text>
-                <Text
-                  numberOfLines={1}
-                  ellipsizeMode='tail'
-                  style={[styles.taskDescription, item.isDone && styles.completedText]}
-                >
-                  {item.description}
+  const renderItem = ({ item }) => (
+    <Swipeable
+      ref={(ref) => (swipeableRow.current = ref)}
+      friction={2}
+      leftThreshold={30}
+      rightThreshold={40}
+      renderLeftActions={() => leftSwipe(item)}
+      renderRightActions={() => rightSwipe(item)}
+      onSwipeableWillOpen={() => {
+        closeRow();
+        setCurrentlyActiveRow(swipeableRow.current);
+      }}
+      onSwipeableClose={() => {
+        if (currentlyActiveRow === swipeableRow.current) {
+          setCurrentlyActiveRow(null);
+        }
+      }}
+    >
+      <TouchableOpacity activeOpacity={0.8} onLongPress={() => toggleTaskModal(item)}>
+        <View style={[styles.taskCard, item.isDone && styles.completedTask]}>
+          <View style={styles.taskRow}>
+            <Checkbox checked={item.isDone} onPress={() => toggleComplete(item)} />
+            <View style={styles.taskContent}>
+              <View style={styles.taskHeader}>
+                <Text style={[styles.taskTitle, item.isDone && styles.completedText]}>
+                  {item.title}
                 </Text>
+                <PriorityBadge priority={item.priority} />
               </View>
+              <Text style={styles.taskDate}>Due: {item.duedate}</Text>
+              <Text
+                numberOfLines={1}
+                ellipsizeMode='tail'
+                style={[styles.taskDescription, item.isDone && styles.completedText]}
+              >
+                {item.description}
+              </Text>
             </View>
           </View>
-        </TouchableOpacity>
-      </Swipeable>
-    );
-  };
+        </View>
+      </TouchableOpacity>
+    </Swipeable>
+  );
 
   const headerSearch = (txt) => {
     setSearchQuery(txt);
   };
+
+  useEffect(()=>{
+    console.log("List Screen Mount")
+
+    return ()=> {
+    console.log("List Screen UnMount")
+
+    }
+  },[])
 
   return (
     <SafeAreaView style={styles.container}>
@@ -148,26 +137,23 @@ const TodoList = ({ navigation }) => {
           <FlatList
             data={filteredTasks}
             keyExtractor={(item) => item.id}
-            renderItem={({ item }) => <RenderItem item={item} />}
+            renderItem={renderItem}
             ListEmptyComponent={() => (
               <Text style={styles.emptyText}>No tasks found. Add one!</Text>
             )}
-            keyboardShouldPersistTaps="handled"
           />
         </GestureHandlerRootView>
       </View>
-
       {!isKeyboardVisible && <PlusButton onPress={() => navigation.navigate("AddTodo")} />}
       <TodoModal visible={visible} onPress={toggleTaskModal} item={modalData} />
       <Modal transparent visible={loader}>
-        <View style={styles.loaderContainer}>
+        <View style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "rgba(0, 0, 0, 0.25)" }}>
           <ActivityIndicator color={ColorPatel.AppColor} size={70} />
         </View>
       </Modal>
     </SafeAreaView>
   );
 };
-
 
 export default TodoList;
 
@@ -241,11 +227,4 @@ const styles = StyleSheet.create({
     borderTopEndRadius: 8,
     borderBottomEndRadius: 8,
   },
-  loaderContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.25)"
-  }
 });
-
