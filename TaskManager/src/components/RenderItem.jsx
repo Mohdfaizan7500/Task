@@ -17,12 +17,12 @@ const RenderItemList = ({ item, index, onComponentOpen }) => {
         setLoader(false);
     };
 
-    const closeRow = useCallback(() => {
-        if (currentlyActiveRow) {
-            currentlyActiveRow.close();
-            setCurrentlyActiveRow(null);
-        }
-    }, [currentlyActiveRow]);
+    // const closeRow = useCallback(() => {
+    //     if (currentlyActiveRow) {
+    //         currentlyActiveRow.close();
+    //         setCurrentlyActiveRow(null);
+    //     }
+    // }, [currentlyActiveRow]);
 
     const confirmDelete = (item) => {
         Alert.alert("Delete Task", "Are you sure you want to delete this task?", [

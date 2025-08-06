@@ -11,6 +11,9 @@ import { Modal, ActivityIndicator } from 'react-native';
 import Checkbox from '../../components/CheckBox';
 import PriorityBadge from '../../components/PriorityBadge';
 import { ColorPatel } from '../../assets/ColorPatel';
+import { s } from 'react-native-size-matters';
+import { vs } from 'react-native-size-matters';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const TodoList = ({ navigation }) => {
   const { task, updateTask, deleteTask, searchTasks } = useTodo();
@@ -43,6 +46,8 @@ const TodoList = ({ navigation }) => {
   };
 
   const handleRowOpen = (rowId) => {
+    console.log(rowId)
+    console.log(openRowId)
     // Close any previously opened row
     if (openRowId && openRowId !== rowId && swipeableRefs[openRowId]) {
       swipeableRefs[openRowId].close();
@@ -95,7 +100,7 @@ const TodoList = ({ navigation }) => {
         renderRightActions={() => rightSwipe(item)}
         onSwipeableOpen={() => handleRowOpen(item.id)}
         onSwipeableClose={() => handleRowClose(item.id)}
-        overshootFriction={8}
+      // overshootFriction={2}
       >
         <TouchableOpacity
           activeOpacity={0.8}
@@ -130,8 +135,15 @@ const TodoList = ({ navigation }) => {
                 </Text>
               </View>
             </View>
+            <View style={styles.timeBox}>
+              <Icon name="access-alarm" size={15} color="gray" />
+              <Text style={styles.time}>{item.duetime}</Text>
+            </View>
+
           </View>
+
         </TouchableOpacity>
+
       </Swipeable>
     );
   };
@@ -206,6 +218,7 @@ const styles = StyleSheet.create({
   taskDescription: {
     color: '#666',
     marginBottom: 8,
+    marginEnd: 80
   },
   taskDate: {
     fontStyle: 'italic',
@@ -246,6 +259,20 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "rgba(0, 0, 0, 0.25)"
+  },
+  time: {
+    color: "gray",
+    fontSize: s(10)
+  },
+  timeBox:{
+    flexDirection:"row",
+    position:"absolute",
+    bottom:vs(10),
+    right:s(15),
+    gap:5,
+    justifyContent:"center",
+    alignItems:"center"
+
   }
 });
 

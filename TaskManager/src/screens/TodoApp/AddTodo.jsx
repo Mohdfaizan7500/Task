@@ -3,11 +3,14 @@ import React, { useEffect, useState } from 'react';
 import { Calendar } from 'react-native-calendars';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { useTodo } from './TodoProvider';
+import DateTimePicker from '@react-native-community/datetimepicker'; // Import DateTimePicker
 
 const AddTodo = ({ navigation, route }) => {
   const { addTask, updateTask } = useTodo();
   const [showCalendar, setShowCalendar] = useState(false);
+  const [showTimePicker, setShowTimePicker] = useState(false); // State for time picker
   const [tempSelectedDate, setTempSelectedDate] = useState('');
+  const [tempSelectedTime, setTempSelectedTime] = useState(new Date()); // State for selected time
   const isEdit = route.params?.task;
   const [task, setTask] = useState(
     isEdit ? route.params.task : {
@@ -16,6 +19,7 @@ const AddTodo = ({ navigation, route }) => {
       description: '',
       priority: 'medium',
       duedate: new Date().toISOString().split('T')[0],
+      duetime: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })// Add time to task
     }
   );
 
@@ -36,6 +40,11 @@ const AddTodo = ({ navigation, route }) => {
     });
   };
 
+  const formatDisplayTime = (time) => {
+    if (!time) return 'Select Time';
+    return time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  };
+
   const toggleCalendar = () => {
     setShowCalendar(!showCalendar);
   };
@@ -47,6 +56,13 @@ const AddTodo = ({ navigation, route }) => {
   const handleConfirmDate = () => {
     setTask({ ...task, duedate: tempSelectedDate });
     setShowCalendar(false);
+  };
+
+  const handleConfirmTime = (event, selectedDate) => {
+    const currentDate = selectedDate || tempSelectedTime;
+    setShowTimePicker(false);
+    setTempSelectedTime(currentDate);
+    setTask({ ...task, duetime: currentDate }); // Update task with selected time
   };
 
   const getPriorityButtonStyle = (priorityLevel) => {
@@ -88,6 +104,10 @@ const AddTodo = ({ navigation, route }) => {
       Alert.alert('Validation Error', 'Due Date is required');
       return;
     }
+    if (!task.duetime) {
+      Alert.alert('Validation Error', 'Due Time is required');
+      return;
+    }
     isEdit && Alert.alert('Inform', 'Save Changes.');
     isEdit ? updateTask(task.id, task) : addTask(task);
     setTask({
@@ -96,6 +116,7 @@ const AddTodo = ({ navigation, route }) => {
       description: '',
       priority: 'medium',
       duedate: new Date().toISOString().split('T')[0],
+      duetime: new Date(), // Reset time
     });
     navigation.goBack();
   };
@@ -143,6 +164,13 @@ const AddTodo = ({ navigation, route }) => {
             </Text>
             <MaterialIcons name="calendar-today" size={20} color="#6200ee" />
           </TouchableOpacity>
+          <Text style={styles.label}>Due Time</Text>
+          <TouchableOpacity style={styles.dateInput} onPress={() => setShowTimePicker(true)}>
+            <Text style={task.duetime ? styles.dateText : styles.placeholderText}>
+              {formatDisplayTime(tempSelectedTime)}
+            </Text>
+            <MaterialIcons name="access-time" size={20} color="#6200ee" />
+          </TouchableOpacity>
         </View>
         <Modal visible={showCalendar} animationType="slide" transparent={true}>
           <View style={styles.calendarModal}>
@@ -180,6 +208,15 @@ const AddTodo = ({ navigation, route }) => {
             </View>
           </View>
         </Modal>
+        {showTimePicker && (
+          <DateTimePicker
+            value={tempSelectedTime}
+            mode="time"
+            is24Hour={false}
+            display="default"
+            onChange={handleConfirmTime}
+          />
+        )}
         <View style={styles.formActions}>
           <Button
             title="Cancel"
